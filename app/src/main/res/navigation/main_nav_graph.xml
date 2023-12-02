@@ -9,5 +9,14 @@
         android:id="@+id/folderPickerFragment"
         android:name="com.drexask.reduplicate.FolderPickerFragment"
         android:label="fragment_folder_picker"
-        tools:layout="@layout/fragment_folder_picker" />
+        tools:layout="@layout/fragment_folder_picker" >
+        <action
+            android:id="@+id/action_folderPickerFragment_to_duplicateFinderFragment"
+            app:destination="@id/duplicateFinderFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/duplicateFinderFragment"
+        android:name="com.drexask.reduplicate.DuplicateFinderFragment"
+        android:label="fragment_duplicate_finder"
+        tools:layout="@layout/fragment_duplicate_finder" />
 </navigation>

@@ -19,11 +19,4 @@ class StorageManager @Inject constructor() {
 
         return storageFolder
     }
-
-    fun getFolderPermission(activityFolderPickerResultLauncher: ActivityResultLauncher<Intent>) {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-            .putExtra(DocumentsContract.EXTRA_INITIAL_URI, Environment.getExternalStorageDirectory())
-        activityFolderPickerResultLauncher.launch(intent)
-    }
-
 }
