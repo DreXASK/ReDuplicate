@@ -21,4 +21,16 @@ data class StorageFolder(
             }
         }
     }
+
+    fun getStoredFilesQuantity(): Int {
+        var returnValueInt = 0
+        storedItems.map {
+            returnValueInt += when(it) {
+                is StorageFile -> 1
+                is StorageFolder -> it.getStoredFilesQuantity()
+                else -> throw Error("Unexpected type")
+            }
+        }
+        return returnValueInt
+    }
 }

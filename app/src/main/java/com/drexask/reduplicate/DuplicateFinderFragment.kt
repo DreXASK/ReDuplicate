@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
@@ -33,7 +34,10 @@ class DuplicateFinderFragment : Fragment() {
             else -> @Suppress("DEPRECATION") arguments?.getParcelable(TREE_URI) as? Uri
         }?.let {
             viewModel.treeUri.value = it
+            viewModel.folderFileDoc.value = context?.let { context -> DocumentFile.fromTreeUri(context, it) }
         }
+
+        println(viewModel.itemsQuantityInSelectedFolder)
 
         viewModel.treeUri.observe(viewLifecycleOwner, treeUriObserver)
         binding.btnBackToFolderPicker.setOnClickListener {
