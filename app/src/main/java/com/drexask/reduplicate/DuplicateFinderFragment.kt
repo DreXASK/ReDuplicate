@@ -55,6 +55,10 @@ class DuplicateFinderFragment : Fragment() {
                 progressCircular.max = 10000
                 CoroutineScope(Dispatchers.Default).launch { deleteThisPlease() }
             }
+
+            btnSettings.setOnClickListener {
+                println("мдамдамда")
+            }
         }
 
         return binding.root

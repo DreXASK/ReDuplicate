@@ -7,6 +7,5 @@
     <style name="Theme.ReDuplicate" parent="Base.Theme.ReDuplicate">
         <item name="android:statusBarColor">@color/black</item>
     </style>>
-    
 
 </resources>
