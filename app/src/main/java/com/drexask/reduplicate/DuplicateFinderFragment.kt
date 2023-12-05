@@ -14,6 +14,10 @@ import androidx.navigation.fragment.findNavController
 import com.drexask.reduplicate.databinding.FragmentDuplicateFinderBinding
 import com.drexask.reduplicate.databinding.FragmentFolderPickerBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -32,18 +36,26 @@ class DuplicateFinderFragment : Fragment() {
         when {
             SDK_INT >= 33 -> arguments?.getParcelable(TREE_URI, Uri::class.java)
             else -> @Suppress("DEPRECATION") arguments?.getParcelable(TREE_URI) as? Uri
-        }?.let {
-            viewModel.treeUri.value = it
-            viewModel.folderFileDoc.value = context?.let { context -> DocumentFile.fromTreeUri(context, it) }
+        }?.let {treeUri ->
+            viewModel.treeUri.value = treeUri
+            viewModel.folderFileDoc.value = context?.let { context -> DocumentFile.fromTreeUri(context, treeUri) }
         }
 
         println(viewModel.itemsQuantityInSelectedFolder)
 
         viewModel.treeUri.observe(viewLifecycleOwner, treeUriObserver)
-        binding.btnBackToFolderPicker.setOnClickListener {
-            findNavController().popBackStack()
-        }
 
+        binding.apply {
+
+            btnBackToFolderPicker.setOnClickListener {
+                findNavController().popBackStack()
+            }
+
+            btnLaunch.setOnClickListener {
+                progressCircular.max = 10000
+                CoroutineScope(Dispatchers.Default).launch { deleteThisPlease() }
+            }
+        }
 
         return binding.root
     }
@@ -52,5 +64,15 @@ class DuplicateFinderFragment : Fragment() {
         binding.currentFolderName.text = it.lastPathSegment?.replaceFirst("primary:", "")
     }
 
-
+    private suspend fun deleteThisPlease() {
+        var currentProgress = 0
+        while (currentProgress <= 10000) {
+            CoroutineScope(Dispatchers.Main).launch {
+                _binding?.progressCircular?.progress = currentProgress
+                _binding?.textView?.text = currentProgress.toString()
+                currentProgress += 10
+            }
+            delay(10L)
+        }
+    }
 }

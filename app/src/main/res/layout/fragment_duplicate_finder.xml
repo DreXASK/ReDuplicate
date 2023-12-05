@@ -10,11 +10,13 @@
     <View
         android:id="@+id/divider"
         android:layout_width="0dp"
-        android:layout_height="1dp"
+        android:layout_height="0dp"
         android:layout_marginStart="1dp"
+        android:layout_marginTop="67dp"
         android:layout_marginEnd="1dp"
+        android:layout_marginBottom="180dp"
         android:background="?android:attr/listDivider"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/progressBar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,7 +25,7 @@
 
     <Button
         android:id="@+id/btn_back_to_folderPicker"
-        style="@style/ButtonWithIconOnly"
+        style="@style/OutlinedButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:paddingLeft="12dp"
@@ -46,4 +48,42 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btn_back_to_folderPicker"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progress_circular"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:indeterminateOnly="false"
+        android:progress="50"
+        android:progressDrawable="@drawable/circle_launch_button_with_progress_bar"
+        android:rotation="90"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider"
+        app:layout_constraintVertical_bias="0.24000001"
+        tools:progress="25" />
+
+
+    <Button
+        android:id="@+id/btn_launch"
+        style="@style/BigLaunchButton"
+        android:layout_width="290dp"
+        android:layout_height="290dp"
+        app:layout_constraintBottom_toBottomOf="@+id/progress_circular"
+        app:layout_constraintEnd_toEndOf="@+id/progress_circular"
+        app:layout_constraintStart_toStartOf="@+id/progress_circular"
+        app:layout_constraintTop_toTopOf="@+id/progress_circular" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progress_circular" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

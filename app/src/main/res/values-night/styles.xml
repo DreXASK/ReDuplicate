@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="BigLaunchButton" parent="Widget.Material3.Button.IconButton.Filled.Tonal">
+        <item name="iconPadding">0dp</item>
+        <item name="backgroundTint">@color/gray</item>
+        <item name="icon">@drawable/baseline_arrow_right_24</item>
+        <item name="iconGravity">textStart</item>
+        <item name="iconSize">200dp</item>
+        <item name="iconTint">@color/yellow</item>
+    </style>
+
+</resources>
