@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/folderPickerFragment"
-        android:name="com.drexask.reduplicate.FolderPickerFragment"
+        android:name="com.drexask.reduplicate.presentation.ui.fragments.FolderPickerFragment"
         android:label="fragment_folder_picker"
         tools:layout="@layout/fragment_folder_picker" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/duplicateFinderFragment"
-        android:name="com.drexask.reduplicate.DuplicateFinderFragment"
+        android:name="com.drexask.reduplicate.presentation.ui.fragments.DuplicateFinderFragment"
         android:label="fragment_duplicate_finder"
         tools:layout="@layout/fragment_duplicate_finder" />
 </navigation>
