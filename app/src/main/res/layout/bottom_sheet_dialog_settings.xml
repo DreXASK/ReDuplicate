@@ -2,20 +2,9 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/bottom_sheet_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/header_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/duplicates_find_settings"
-        android:textSize="34sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.491"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/upper_textView"
@@ -25,7 +14,7 @@
         android:text="@string/we_will_use"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/header_textView" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"
@@ -42,42 +31,33 @@
         app:layout_constraintVertical_bias="0.0">
 
         <com.google.android.material.chip.Chip
-            android:id="@+id/chip8"
+            android:id="@+id/chip_file_names"
             style="@style/ChipChoice"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_weight="1"
-            android:text="@string/use_file_names_to_find_duplicates" />
+            android:text="@string/use_file_names_to_find_duplicates"
+            android:checkable="true"/>
 
         <com.google.android.material.chip.Chip
-            android:id="@+id/chip7"
+            android:id="@+id/chip_file_hashes"
             style="@style/ChipChoice"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_weight="1"
-            android:text="@string/use_file_hash_to_find_duplicates" />
+            android:text="@string/use_file_hash_to_find_duplicates"
+            android:checkable="true"/>
 
         <com.google.android.material.chip.Chip
-            android:id="@+id/chip6"
+            android:id="@+id/chip_file_weights"
             style="@style/ChipChoice"
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_weight="1"
             android:text="@string/use_file_weights_to_find_duplicates"
-            android:checked="true" />
+            android:checkable="true"
+            tools:checked="true"/>
 
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/lower_textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="@string/to_find_duplicates"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-        app:layout_constraintVertical_bias="0.0" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

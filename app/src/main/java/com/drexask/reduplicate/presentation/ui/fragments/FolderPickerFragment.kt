@@ -21,14 +21,18 @@ import com.drexask.reduplicate.MainNavGraphViewModel
 import com.drexask.reduplicate.R
 import com.drexask.reduplicate.TREE_URI
 import com.drexask.reduplicate.databinding.FragmentFolderPickerBinding
+import com.drexask.reduplicate.domain.usecases.ChooseFolderUseCase
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class FolderPickerFragment : Fragment() {
 
-    private val viewModel: MainNavGraphViewModel by hiltNavGraphViewModels<MainNavGraphViewModel>(R.id.main_graph)
+    private val viewModel by hiltNavGraphViewModels<MainNavGraphViewModel>(R.id.main_graph)
 
     private lateinit var activityFolderPickerResultLauncher: ActivityResultLauncher<Intent>
+
+    private lateinit var chooseFolderUseCase: ChooseFolderUseCase
 
     private var _binding: FragmentFolderPickerBinding? = null
     private val binding get() = _binding!!
@@ -45,6 +49,8 @@ class FolderPickerFragment : Fragment() {
         setupListeners()
         setupResultLaunchers()
 
+        chooseFolderUseCase = ChooseFolderUseCase(activityFolderPickerResultLauncher)
+
         return binding.root
     }
 
@@ -52,13 +58,18 @@ class FolderPickerFragment : Fragment() {
         clickTakePermission()
     }
 
+
     private fun clickTakePermission() {
         binding.btnTakePermission.setOnClickListener {
-            getFolderPermission()
+            chooseFolderUseCase.execute()
         }
     }
 
     private fun setupResultLaunchers() {
+        setupFolderPickerResultLauncher()
+    }
+
+    private fun setupFolderPickerResultLauncher() {
 
         activityFolderPickerResultLauncher = registerForActivityResult(
             ActivityResultContracts.StartActivityForResult()
@@ -72,12 +83,6 @@ class FolderPickerFragment : Fragment() {
             }
         }
 
-    }
-
-    private fun getFolderPermission() {
-        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE)
-            .putExtra(DocumentsContract.EXTRA_INITIAL_URI, Environment.getExternalStorageDirectory())
-        activityFolderPickerResultLauncher.launch(intent)
     }
 
     override fun onDestroyView() {

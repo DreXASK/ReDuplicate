@@ -4,7 +4,7 @@
     <item>
         <rotate
             android:fromDegrees="0"
-            android:toDegrees="720">
+            android:toDegrees="1800">
             <shape
                 android:shape="ring"
                 android:thickness="10dp"

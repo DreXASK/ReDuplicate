@@ -8,4 +8,8 @@
         <item name="android:statusBarColor">@color/black</item>
     </style>>
 
+    <style name="CustomBottomSheetDialogTheme" parent="Theme.MaterialComponents.BottomSheetDialog" >
+        <item name="bottomSheetStyle">@style/CustomBottomSheetDialogStyle</item>
+    </style>
+
 </resources>

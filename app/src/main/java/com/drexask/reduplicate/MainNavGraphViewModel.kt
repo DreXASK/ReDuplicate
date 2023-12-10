@@ -16,6 +16,11 @@ class MainNavGraphViewModel @Inject constructor(
 
     val treeUri = MutableLiveData<Uri>()
     val folderFileDoc = MutableLiveData<DocumentFile>()
+
+    val useFileNames = MutableLiveData<Boolean>().also { it.value = false }
+    val useFileHashes = MutableLiveData<Boolean>().also { it.value = false }
+    val useFileWeights = MutableLiveData<Boolean>().also { it.value = true }
+
     private var scannedFolder: StorageFolder? = null
     private var itemsQuantityInSelectedFolder: Int? = null
 

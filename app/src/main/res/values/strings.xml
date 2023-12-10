@@ -7,6 +7,5 @@
     <string name="use_file_names_to_find_duplicates">File names</string>
     <string name="use_file_weights_to_find_duplicates">File weights</string>
     <string name="use_file_hash_to_find_duplicates">File hashes</string>
-    <string name="we_will_use">We will use…</string>
-    <string name="to_find_duplicates">to find duplicates</string>
+    <string name="we_will_use">Select methods to find duplicates</string>
 </resources>
