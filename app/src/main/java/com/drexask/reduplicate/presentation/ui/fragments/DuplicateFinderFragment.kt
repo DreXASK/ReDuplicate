@@ -1,35 +1,20 @@
 package com.drexask.reduplicate.presentation.ui.fragments
 
-import android.app.Dialog
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
-import android.view.Gravity
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import androidx.annotation.LayoutRes
 import androidx.documentfile.provider.DocumentFile
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.navGraphViewModels
 import com.drexask.reduplicate.MainNavGraphViewModel
 import com.drexask.reduplicate.R
-import com.drexask.reduplicate.databinding.BottomSheetDialogSettingsBinding
 import com.drexask.reduplicate.databinding.FragmentDuplicateFinderBinding
-import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.google.android.material.chip.Chip
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DuplicateFinderFragment : Fragment() {
@@ -54,6 +39,7 @@ class DuplicateFinderFragment : Fragment() {
         setupListeners()
         viewModel.treeUri.observe(viewLifecycleOwner, treeUriObserver)
 
+
         return binding.root
     }
 
@@ -76,8 +62,18 @@ class DuplicateFinderFragment : Fragment() {
     }
     private fun clickLaunch() {
         binding.btnLaunch.setOnClickListener {
-            binding.progressCircular.max = 10000
-            CoroutineScope(Dispatchers.Default).launch { deleteThisPlease() }
+
+            val scannedFolder = viewModel.getScannedFolderOrNull()
+
+            viewModel.resetDuplicatesMap()
+            viewModel.fillDuplicatesMap(scannedFolder)
+
+            viewModel.duplicatesMap.value?.map {
+                println(it.key)
+                it.value.map { storageFile -> println(storageFile.file.uri.path) }
+                println("---------------")
+            }
+
         }
     }
 
@@ -92,7 +88,7 @@ class DuplicateFinderFragment : Fragment() {
         binding.currentFolderName.text = it.lastPathSegment?.replaceFirst("primary:", "")
     }
 
-    private suspend fun deleteThisPlease() {
+/*    private suspend fun deleteThisPlease() {
         var currentProgress = 0
         while (currentProgress <= 10000) {
             CoroutineScope(Dispatchers.Main).launch {
@@ -102,7 +98,7 @@ class DuplicateFinderFragment : Fragment() {
             }
             delay(10L)
         }
-    }
+    }*/
 
     override fun onDestroyView() {
         super.onDestroyView()
