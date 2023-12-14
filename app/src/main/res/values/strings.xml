@@ -5,11 +5,12 @@
     <string name="btn_select_folder">Select folder</string>
 
     <!-- fragment_duplicate_finder -->
-    <string name="duplicates_find_settings">Duplicates find settings</string>
+    <string name="bottom_sheet_fragment_settings_button">Settings</string>
     <string name="use_file_names_to_find_duplicates">File names</string>
     <string name="use_file_weights_to_find_duplicates">File weights</string>
     <string name="use_file_hash_to_find_duplicates">File hashes</string>
     <string name="select_methods_to_find_duplicates">Select methods to find duplicates</string>
+    <string name="current_progress">%1$d from %2$d</string>
 
 
 </resources>

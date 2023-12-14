@@ -38,6 +38,7 @@ class DuplicateFinderFragment : Fragment() {
 
         setupListeners()
         viewModel.treeUri.observe(viewLifecycleOwner, treeUriObserver)
+        viewModel.numberOfProcessedFiles.observe(viewLifecycleOwner, numberOfProcessedFilesObserver)
 
 
         return binding.root
@@ -63,10 +64,23 @@ class DuplicateFinderFragment : Fragment() {
     private fun clickLaunch() {
         binding.btnLaunch.setOnClickListener {
 
-            val scannedFolder = viewModel.getScannedFolderOrNull()
+            if (viewModel.useFileNames.value == false
+                && viewModel.useFileWeights.value == false
+                && viewModel.useFileHashes.value == false) {
+                showSettingsDialog()
+                return@setOnClickListener
+            }
 
-            viewModel.resetDuplicatesMap()
-            viewModel.fillDuplicatesMap(scannedFolder)
+
+            viewModel.numberOfProcessedFiles.value = 0
+            viewModel.scanFolder()
+
+            binding.progressCircular.max = viewModel.getItemsQuantityInSelectedFolderAndRememberIt()
+
+            viewModel.clearDuplicatesMap()
+            viewModel.fillDuplicatesMap()
+
+
 
             viewModel.duplicatesMap.value?.map {
                 println(it.key)
@@ -85,20 +99,14 @@ class DuplicateFinderFragment : Fragment() {
 
 
     private val treeUriObserver = Observer<Uri> {
-        binding.currentFolderName.text = it.lastPathSegment?.replaceFirst("primary:", "")
+        binding.tvCurrentFolderName.text = it.lastPathSegment?.replaceFirst("primary:", "")
     }
 
-/*    private suspend fun deleteThisPlease() {
-        var currentProgress = 0
-        while (currentProgress <= 10000) {
-            CoroutineScope(Dispatchers.Main).launch {
-                _binding?.progressCircular?.progress = currentProgress
-                _binding?.textView?.text = currentProgress.toString()
-                currentProgress += 10
-            }
-            delay(10L)
-        }
-    }*/
+    private val numberOfProcessedFilesObserver = Observer<Int> {
+        binding.progressCircular.progress = it
+        val finalQuantity = binding.progressCircular.max
+        binding.tvCurrentProgress.text = getString(R.string.current_progress, it, finalQuantity)
+    }
 
     override fun onDestroyView() {
         super.onDestroyView()

@@ -7,15 +7,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.drexask.reduplicate.storagetools.StorageFile
 import com.drexask.reduplicate.storagetools.StorageFolder
-import com.drexask.reduplicate.storagetools.StorageManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.lang.StringBuilder
 import javax.inject.Inject
 
 @HiltViewModel
-class MainNavGraphViewModel @Inject constructor(
-    private val storageManager: StorageManager
-) : ViewModel() {
+class MainNavGraphViewModel @Inject constructor() : ViewModel() {
 
     val treeUri = MutableLiveData<Uri>()
     val folderFileDoc = MutableLiveData<DocumentFile>()
@@ -24,42 +21,36 @@ class MainNavGraphViewModel @Inject constructor(
     val useFileHashes = MutableLiveData<Boolean>().also { it.value = false }
     val useFileWeights = MutableLiveData<Boolean>().also { it.value = false }
 
-    private val _duplicatesMap = MutableLiveData<MutableMap<String, MutableList<StorageFile>>>().also {
-        it.value = emptyMap<String, MutableList<StorageFile>>().toMutableMap()
-    }  //TODO: Check if it'll be properly observed
+    private val _duplicatesMap =
+        MutableLiveData<MutableMap<String, MutableList<StorageFile>>>().also {
+            it.value = emptyMap<String, MutableList<StorageFile>>().toMutableMap()
+        }  //TODO: Check if it'll be properly observed
     val duplicatesMap
         get() = _duplicatesMap as LiveData<MutableMap<String, MutableList<StorageFile>>>
 
 
     private var scannedFolder: StorageFolder? = null
     private var itemsQuantityInSelectedFolder: Int? = null
+    val numberOfProcessedFiles = MutableLiveData<Int>()
 
-    fun getScannedFolderOrNull(): StorageFolder? {
-        return when(scannedFolder) {
-            is StorageFolder -> scannedFolder
-            null -> folderFileDoc.value?.let { file ->
-                scannedFolder = storageManager.scanAndReturnFolder(file)
-                scannedFolder
-            }
-            else -> throw Exception("Unknown type")
+
+    fun scanFolder() {
+        if (folderFileDoc.value == null)
+            throw Exception("folderFileDoc.value cannot be null here")
+        scannedFolder = StorageFolder(folderFileDoc.value!!).also { it.scanFolderForStoredItems() }
+    }
+
+    fun getItemsQuantityInSelectedFolderAndRememberIt(): Int {
+        if (scannedFolder == null)
+            throw Exception("scannedFolder cannot be null here")
+
+        return itemsQuantityInSelectedFolder ?: scannedFolder!!.getStoredFilesQuantity().also {
+            itemsQuantityInSelectedFolder = it
         }
     }
 
-    fun getItemsQuantityInSelectedFolderOrNull(): Int? {
-        return when(itemsQuantityInSelectedFolder) {
-            is Int -> itemsQuantityInSelectedFolder
-            null -> treeUri.value?.let {
-                folderFileDoc.value?.let {
-                    itemsQuantityInSelectedFolder = getScannedFolderOrNull()?.getStoredFilesQuantity()
-                    itemsQuantityInSelectedFolder
-                }
-            }
-            else -> throw Exception("Unknown type")
-        }
-    }
-
-    fun resetDuplicatesMap() {
-        _duplicatesMap.value = emptyMap<String, MutableList<StorageFile>>().toMutableMap()
+    fun clearDuplicatesMap() {
+        _duplicatesMap.value?.clear()
     }
 
     fun fillDuplicatesMap(folder: StorageFolder? = scannedFolder) {
@@ -69,7 +60,10 @@ class MainNavGraphViewModel @Inject constructor(
         folder.storedItems.map {
             when (it) {
                 is StorageFolder -> fillDuplicatesMap(it)
-                is StorageFile -> addFileToDuplicatesMapUsingSettings(it)
+                is StorageFile -> {
+                    addFileToDuplicatesMapUsingSettings(it)
+                    numberOfProcessedFiles.value = numberOfProcessedFiles.value?.plus(1)
+                }
             }
 
         }
