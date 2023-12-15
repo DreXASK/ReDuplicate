@@ -15,6 +15,9 @@ import com.drexask.reduplicate.R
 import com.drexask.reduplicate.databinding.FragmentDuplicateFinderBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DuplicateFinderFragment : Fragment() {
@@ -71,23 +74,22 @@ class DuplicateFinderFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            CoroutineScope(Dispatchers.IO).launch {
 
-            viewModel.numberOfProcessedFiles.value = 0
-            viewModel.scanFolder()
+                viewModel.numberOfProcessedFiles.postValue(0)
+                viewModel.scanFolder()
 
-            binding.progressCircular.max = viewModel.getItemsQuantityInSelectedFolderAndRememberIt()
+                binding.progressCircular.max = viewModel.getItemsQuantityInSelectedFolderAndRememberIt()
 
-            viewModel.clearDuplicatesMap()
-            viewModel.fillDuplicatesMap()
+                println("Говорит FINDERFRAGMENT: " + Thread.currentThread())
+                viewModel.getDuplicates()
 
-
-
-            viewModel.duplicatesMap.value?.map {
-                println(it.key)
-                it.value.map { storageFile -> println(storageFile.file.uri.path) }
-                println("---------------")
+/*                viewModel.duplicates?.duplicatesMap?.map {
+                    println(it.key)
+                    it.value.map { storageFile -> println(storageFile.file.uri.path) }
+                    println("---------------")
+                }*/
             }
-
         }
     }
 

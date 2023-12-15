@@ -1,5 +1,6 @@
 package com.drexask.reduplicate.domain.models
 
-import com.drexask.reduplicate.storagetools.Storable
+import com.drexask.reduplicate.storagetools.StorageFile
 
-class Duplicates(val DuplicatesMap: Map<String, MutableList<Storable>>)
+@JvmInline
+value class Duplicates(val duplicatesMap: MutableMap<String, MutableList<StorageFile>>)
