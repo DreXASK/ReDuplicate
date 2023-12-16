@@ -1,6 +1,6 @@
 package com.drexask.reduplicate.domain.usecases
 
-import com.drexask.reduplicate.domain.models.Duplicates
+import com.drexask.reduplicate.domain.models.Duplicate
 import com.drexask.reduplicate.domain.models.DuplicatesFindSettings
 import com.drexask.reduplicate.storagetools.StorageFile
 import com.drexask.reduplicate.storagetools.StorageFolder
@@ -20,14 +20,18 @@ class GetDuplicatesUseCase @Inject constructor() {
     private var numberOfProcessedFiles = 0
 
 
-    fun execute(settings: DuplicatesFindSettings, scannedFolder: StorageFolder) : Duplicates {
+    fun execute(settings: DuplicatesFindSettings, scannedFolder: StorageFolder) : List<Duplicate> {
         this.settings = settings
-
         fillDuplicatesMap(scannedFolder)
 
-        println("Говорит execute: " + Thread.currentThread())
+        val duplicateList = emptyList<Duplicate>().toMutableList()
 
-        return Duplicates(duplicatesMap)
+        duplicatesMap.map {
+            //if (it.value.size > 1)
+                duplicateList.add(Duplicate(it.key, it.value))
+        }
+
+        return duplicateList
     }
 
     suspend fun getProgressFlow(): Flow<Int> {
@@ -53,7 +57,6 @@ class GetDuplicatesUseCase @Inject constructor() {
                 }
             }
         }
-        println("Говорит fillDuplicatesmap: " + Thread.currentThread())
     }
 
     private fun addFileToDuplicatesMapUsingSettings(file: StorageFile) {

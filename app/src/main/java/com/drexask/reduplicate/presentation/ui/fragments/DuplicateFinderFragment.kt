@@ -18,6 +18,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @AndroidEntryPoint
 class DuplicateFinderFragment : Fragment() {
@@ -74,21 +75,27 @@ class DuplicateFinderFragment : Fragment() {
                 return@setOnClickListener
             }
 
+            binding.progressCircular.visibility = View.VISIBLE
+
             CoroutineScope(Dispatchers.IO).launch {
 
-                viewModel.numberOfProcessedFiles.postValue(0)
+                binding.progressCircular.isIndeterminate = true
                 viewModel.scanFolder()
-
                 binding.progressCircular.max = viewModel.getItemsQuantityInSelectedFolderAndRememberIt()
+                binding.progressCircular.isIndeterminate = false
 
-                println("Говорит FINDERFRAGMENT: " + Thread.currentThread())
                 viewModel.getDuplicates()
 
-/*                viewModel.duplicates?.duplicatesMap?.map {
-                    println(it.key)
-                    it.value.map { storageFile -> println(storageFile.file.uri.path) }
+                viewModel.foundDuplicatesList?.map {
+                    println(it.duplicatesSharedParameters)
+                    it.duplicateFilesInnerList.map { storageFile -> println(storageFile.file.uri.path) }
                     println("---------------")
-                }*/
+                }
+
+                withContext(Dispatchers.Main) {
+                    findNavController().navigate(R.id.action_duplicateFinderFragment_to_duplicateRemoverFragment)
+
+                }
             }
         }
     }

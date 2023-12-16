@@ -3,11 +3,11 @@
     <item>
         <rotate
             android:fromDegrees="0"
-            android:toDegrees="1800">
+            android:toDegrees="360">
             <shape
                 android:shape="ring"
                 android:thickness="10dp"
-                android:useLevel="true">
+                android:useLevel="false">
                 <stroke
                     android:width="1dp"
                     android:color="@color/yellow"

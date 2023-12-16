@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import com.drexask.reduplicate.DuplicateCardsAdapter
 import com.drexask.reduplicate.MainNavGraphViewModel
 import com.drexask.reduplicate.R
 import com.drexask.reduplicate.databinding.FragmentDuplicateFinderBinding
@@ -27,7 +28,14 @@ class DuplicateRemoverFragment : Fragment() {
 
         _binding = FragmentDuplicateRemoverBinding.inflate(layoutInflater)
 
+        context?.let {
+            val duplicateCardsAdapter = DuplicateCardsAdapter(it, viewModel.foundDuplicatesList!!)
 
+            binding.rvDuplicateCards.apply {
+                adapter = duplicateCardsAdapter
+                setHasFixedSize(true)
+            }
+        }
 
         return binding.root
     }
