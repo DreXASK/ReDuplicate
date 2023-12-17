@@ -1,6 +1,7 @@
 package com.drexask.reduplicate.domain.usecases
 
 import com.drexask.reduplicate.domain.models.Duplicate
+import com.drexask.reduplicate.domain.models.DuplicateWithHighlightedLine
 import com.drexask.reduplicate.domain.models.DuplicatesFindSettings
 import com.drexask.reduplicate.storagetools.StorageFile
 import com.drexask.reduplicate.storagetools.StorageFolder
@@ -20,15 +21,15 @@ class GetDuplicatesUseCase @Inject constructor() {
     private var numberOfProcessedFiles = 0
 
 
-    fun execute(settings: DuplicatesFindSettings, scannedFolder: StorageFolder) : List<Duplicate> {
+    fun execute(settings: DuplicatesFindSettings, scannedFolder: StorageFolder) : List<DuplicateWithHighlightedLine> {
         this.settings = settings
         fillDuplicatesMap(scannedFolder)
 
-        val duplicateList = emptyList<Duplicate>().toMutableList()
+        val duplicateList = emptyList<DuplicateWithHighlightedLine>().toMutableList()
 
         duplicatesMap.map {
             //if (it.value.size > 1)
-                duplicateList.add(Duplicate(it.key, it.value))
+                duplicateList.add(DuplicateWithHighlightedLine(it.key, it.value, 0))
         }
 
         return duplicateList

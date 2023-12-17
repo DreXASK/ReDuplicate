@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drexask.reduplicate.domain.models.Duplicate
+import com.drexask.reduplicate.domain.models.DuplicateWithHighlightedLine
 import com.drexask.reduplicate.domain.models.DuplicatesFindSettings
 import com.drexask.reduplicate.domain.usecases.GetDuplicatesUseCase
 import com.drexask.reduplicate.storagetools.StorageFolder
@@ -30,7 +31,7 @@ class MainNavGraphViewModel @Inject constructor() : ViewModel() {
     val useFileHashes = MutableLiveData<Boolean>().also { it.value = false }
     val useFileWeights = MutableLiveData<Boolean>().also { it.value = false }
 
-    var foundDuplicatesList: List<Duplicate>? = null
+    var foundDuplicatesList: List<DuplicateWithHighlightedLine>? = null
 
     private var scannedFolder: StorageFolder? = null
     private var itemsQuantityInSelectedFolder: Int? = null
