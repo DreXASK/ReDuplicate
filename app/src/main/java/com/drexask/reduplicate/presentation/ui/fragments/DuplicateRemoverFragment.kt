@@ -28,6 +28,19 @@ class DuplicateRemoverFragment : Fragment() {
 
         _binding = FragmentDuplicateRemoverBinding.inflate(layoutInflater)
 
+        setupRecyclerView()
+
+        viewModel.getURIsPrioritySet()
+        viewModel.uRIsContainDuplicatesPrioritySet?.map {
+            println(it.lastPathSegment)
+        }
+
+
+
+        return binding.root
+    }
+
+    private fun setupRecyclerView() {
         context?.let {
             val duplicateCardsAdapter = DuplicateCardsAdapter(it, viewModel.foundDuplicatesList!!)
 
@@ -36,7 +49,5 @@ class DuplicateRemoverFragment : Fragment() {
                 setHasFixedSize(true)
             }
         }
-
-        return binding.root
     }
 }

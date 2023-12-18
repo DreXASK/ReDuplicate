@@ -1,18 +1,16 @@
 package com.drexask.reduplicate.domain.usecases
 
-import com.drexask.reduplicate.domain.models.Duplicate
 import com.drexask.reduplicate.domain.models.DuplicateWithHighlightedLine
 import com.drexask.reduplicate.domain.models.DuplicatesFindSettings
 import com.drexask.reduplicate.storagetools.StorageFile
 import com.drexask.reduplicate.storagetools.StorageFolder
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.lang.StringBuilder
 import javax.inject.Inject
 
-class GetDuplicatesUseCase @Inject constructor() {
+class GetDuplicatesListUseCase @Inject constructor() {
 
     private val duplicatesMap = emptyMap<String, MutableList<StorageFile>>().toMutableMap()
 
@@ -25,14 +23,14 @@ class GetDuplicatesUseCase @Inject constructor() {
         this.settings = settings
         fillDuplicatesMap(scannedFolder)
 
-        val duplicateList = emptyList<DuplicateWithHighlightedLine>().toMutableList()
+        val duplicatesList = emptyList<DuplicateWithHighlightedLine>().toMutableList()
 
         duplicatesMap.map {
-            //if (it.value.size > 1)
-                duplicateList.add(DuplicateWithHighlightedLine(it.key, it.value, 0))
+            if (it.value.size > 1)
+                duplicatesList.add(DuplicateWithHighlightedLine(it.key, it.value, 0))
         }
 
-        return duplicateList
+        return duplicatesList
     }
 
     suspend fun getProgressFlow(): Flow<Int> {

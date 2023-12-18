@@ -5,10 +5,10 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.drexask.reduplicate.domain.models.Duplicate
 import com.drexask.reduplicate.domain.models.DuplicateWithHighlightedLine
 import com.drexask.reduplicate.domain.models.DuplicatesFindSettings
-import com.drexask.reduplicate.domain.usecases.GetDuplicatesUseCase
+import com.drexask.reduplicate.domain.usecases.GetDuplicatesListUseCase
+import com.drexask.reduplicate.domain.usecases.GetFoldersURIsContainDuplicatesSetUseCase
 import com.drexask.reduplicate.storagetools.StorageFolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +22,10 @@ import javax.inject.Inject
 class MainNavGraphViewModel @Inject constructor() : ViewModel() {
 
     @Inject
-    lateinit var getDuplicatesUseCase: GetDuplicatesUseCase
+    lateinit var getFoldersURIsContainDuplicatesSetUseCase: GetFoldersURIsContainDuplicatesSetUseCase
+
+    @Inject
+    lateinit var getDuplicatesListUseCase: GetDuplicatesListUseCase
 
     val treeUri = MutableLiveData<Uri>()
     val folderFileDoc = MutableLiveData<DocumentFile>()
@@ -32,6 +35,7 @@ class MainNavGraphViewModel @Inject constructor() : ViewModel() {
     val useFileWeights = MutableLiveData<Boolean>().also { it.value = false }
 
     var foundDuplicatesList: List<DuplicateWithHighlightedLine>? = null
+    var uRIsContainDuplicatesPrioritySet: MutableSet<Uri>? = null
 
     private var scannedFolder: StorageFolder? = null
     private var itemsQuantityInSelectedFolder: Int? = null
@@ -62,14 +66,20 @@ class MainNavGraphViewModel @Inject constructor() : ViewModel() {
         )
 
         viewModelScope.async(Dispatchers.Default) {
-            collectProgressFlow()
-            foundDuplicatesList = getDuplicatesUseCase.execute(settings, scannedFolder!!)
+            foundDuplicatesList = getDuplicatesListUseCase.execute(settings, scannedFolder!!)
         }.await()
     }
 
-    private fun collectProgressFlow() {
+    fun getURIsPrioritySet() {
+        if (foundDuplicatesList == null)
+            throw Exception("foundDuplicatesList cannot be null here")
+
+        uRIsContainDuplicatesPrioritySet = getFoldersURIsContainDuplicatesSetUseCase.execute(foundDuplicatesList!!)
+    }
+
+    fun collectProgressFlow() {
         viewModelScope.launch(Dispatchers.Default + SupervisorJob()) {
-            val progressFlow = getDuplicatesUseCase.getProgressFlow()
+            val progressFlow = getDuplicatesListUseCase.getProgressFlow()
             progressFlow.collect {
                 numberOfProcessedFiles.postValue(it)
                 if (it == itemsQuantityInSelectedFolder)

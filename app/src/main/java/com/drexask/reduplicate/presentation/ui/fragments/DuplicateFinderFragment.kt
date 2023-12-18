@@ -84,21 +84,17 @@ class DuplicateFinderFragment : Fragment() {
                 binding.progressCircular.max = viewModel.getItemsQuantityInSelectedFolderAndRememberIt()
                 binding.progressCircular.isIndeterminate = false
 
+                viewModel.collectProgressFlow()
                 viewModel.getDuplicates()
-
-                viewModel.foundDuplicatesList?.map {
-                    println(it.duplicatesSharedParameters)
-                    it.duplicateFilesInnerList.map { storageFile -> println(storageFile.file.uri.path) }
-                    println("---------------")
-                }
 
                 withContext(Dispatchers.Main) {
                     findNavController().navigate(R.id.action_duplicateFinderFragment_to_duplicateRemoverFragment)
-
                 }
             }
         }
     }
+
+
 
     private fun clickOpenSettings() {
         binding.btnSettings.setOnClickListener {

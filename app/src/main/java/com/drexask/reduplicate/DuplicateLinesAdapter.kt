@@ -30,7 +30,7 @@ class DuplicateLinesAdapter(
         holder.bind(getItem(position), color, ::highlightLineByPosition)
     }
 
-    @SuppressLint("NotifyDataSetChanged") // We need to refresh all set
+    @SuppressLint("NotifyDataSetChanged") // We need to refresh the whole set
     fun highlightLineByPosition(position: Int) {
         duplicateWithHighlightedLine.highlightedLineIndex = position
         notifyDataSetChanged()
