@@ -25,7 +25,7 @@
                 tools:text="File name/weight" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_duplicate_uri"
+                android:id="@+id/rv_duplicate_lines"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>

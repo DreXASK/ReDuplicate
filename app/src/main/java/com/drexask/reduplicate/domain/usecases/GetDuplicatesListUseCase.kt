@@ -27,13 +27,13 @@ class GetDuplicatesListUseCase @Inject constructor() {
 
         duplicatesMap.map {
             if (it.value.size > 1)
-                duplicatesList.add(DuplicateWithHighlightedLine(it.key, it.value, 0))
+                duplicatesList.add(DuplicateWithHighlightedLine(it.key, it.value, 0, false))
         }
 
         return duplicatesList
     }
 
-    suspend fun getProgressFlow(): Flow<Int> {
+    suspend fun getFindingProgressFlow(): Flow<Int> {
         var pastValue = 0
         return flow {
             while(true) {

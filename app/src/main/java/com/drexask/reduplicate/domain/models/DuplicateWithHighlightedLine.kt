@@ -1,10 +1,10 @@
 package com.drexask.reduplicate.domain.models
 
-import android.net.Uri
 import com.drexask.reduplicate.storagetools.StorageFile
 
 class DuplicateWithHighlightedLine(
     duplicatesSharedParameters: String,
     duplicateFilesInnerList: MutableList<StorageFile>,
-    var highlightedLineIndex: Int
-): Duplicate(duplicatesSharedParameters, duplicateFilesInnerList)
+    override var highlightedLineIndex: Int,
+    override var collapsed: Boolean
+): Duplicate(duplicatesSharedParameters, duplicateFilesInnerList), Collapsable, Highlightable

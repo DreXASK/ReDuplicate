@@ -81,7 +81,7 @@ class DuplicateFinderFragment : Fragment() {
                 binding.progressCircular.max = viewModel.getItemsQuantityInSelectedFolderAndCacheIt()
                 binding.progressCircular.isIndeterminate = false
 
-                viewModel.collectProgressFlow()
+                viewModel.collectFindingProgressFlow()
                 viewModel.getDuplicates()
                 viewModel.getURIsPrioritySet()
 

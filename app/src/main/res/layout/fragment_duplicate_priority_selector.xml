@@ -26,7 +26,7 @@
         style="@style/OutlinedButton.WithText"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/folders_priority_settings"
+        android:text="@string/btn_folders_priority_settings"
         app:icon="@drawable/baseline_build_circle_24"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
         app:layout_constraintEnd_toEndOf="parent"
@@ -55,7 +55,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="@string/apply_priority_settings"
+            android:text="@string/btn_apply_priority_settings"
             app:icon="@drawable/baseline_auto_fix_high_24" />
 
         <Button

@@ -6,17 +6,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.drexask.reduplicate.databinding.ListItemDuplicateCardBinding
 import com.drexask.reduplicate.domain.models.DuplicateWithHighlightedLine
 
-class DuplicateCardsViewHolder(view: View): RecyclerView.ViewHolder(view) {
+class DuplicateCardsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-    private var binding: ListItemDuplicateCardBinding = ListItemDuplicateCardBinding.bind(view)
+    var binding: ListItemDuplicateCardBinding = ListItemDuplicateCardBinding.bind(view)
 
-    fun bind(context: Context, duplicate: DuplicateWithHighlightedLine) {
+    fun bind(
+        context: Context,
+        duplicate: DuplicateWithHighlightedLine
+    ) {
         binding.tvFileNameOrWeight.text = duplicate.duplicatesSharedParameters
 
         val duplicateLinesAdapter = DuplicateLinesAdapter(context, duplicate)
-        binding.rvDuplicateUri.apply {
+        binding.rvDuplicateLines.apply {
             adapter = duplicateLinesAdapter
             setHasFixedSize(true)
+            visibility = if(duplicate.collapsed) View.GONE else View.VISIBLE
         }
     }
 }

@@ -9,6 +9,8 @@ import com.drexask.reduplicate.domain.models.DuplicateWithHighlightedLine
 import com.drexask.reduplicate.domain.models.DuplicatesFindSettings
 import com.drexask.reduplicate.domain.usecases.GetDuplicatesListUseCase
 import com.drexask.reduplicate.domain.usecases.GetFoldersURIsContainDuplicatesListUseCase
+import com.drexask.reduplicate.domain.usecases.RemoveDuplicatesUseCase
+import com.drexask.reduplicate.domain.usecases.SetDuplicatesHighlightedLinesByPriorityListUseCase
 import com.drexask.reduplicate.storagetools.StorageFolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -27,26 +29,34 @@ class MainNavGraphViewModel @Inject constructor() : ViewModel() {
     @Inject
     lateinit var getDuplicatesListUseCase: GetDuplicatesListUseCase
 
+    @Inject
+    lateinit var setDuplicatesHighlightedLinesByPriorityListUseCase: SetDuplicatesHighlightedLinesByPriorityListUseCase
+
+    @Inject
+    lateinit var removeDuplicatesUseCase: RemoveDuplicatesUseCase
+
     val treeUriLD = MutableLiveData<Uri>()
     val folderFileDocLD = MutableLiveData<DocumentFile>()
 
+    // For settings
     val useFileNamesLD = MutableLiveData<Boolean>().apply { value = true }
     val useFileWeightsLD = MutableLiveData<Boolean>().apply { value = false }
-
-    var foundDuplicatesList: List<DuplicateWithHighlightedLine>? = null
-    var mURIsContainDuplicatesPriorityList: MutableList<Uri>? = null
 
     private var scannedFolder: StorageFolder? = null
     private var itemsQuantityInSelectedFolder: Int? = null
 
-    val numberOfProcessedFilesLD = MutableLiveData<Int>()
-    val removedBytes = MutableLiveData<Long>().apply { value = 0L }
+    var foundDuplicatesList: List<DuplicateWithHighlightedLine>? = null
+    var mURIsContainDuplicatesPriorityList: MutableList<Uri>? = null
 
+    val numberOfProcessedFilesLD = MutableLiveData<Int>()
+    val numberOfRemovedFilesLD = MutableLiveData<Int>()
+    val numberOfRemovedBytesLD = MutableLiveData<Long>()
 
     fun scanFolder() {
         if (folderFileDocLD.value == null)
             throw Exception("folderFileDoc.value cannot be null here")
-        scannedFolder = StorageFolder(folderFileDocLD.value!!).also { it.scanFolderForStoredItems() }
+        scannedFolder =
+            StorageFolder(folderFileDocLD.value!!).also { it.scanFolderForStoredItems() }
     }
 
     fun getItemsQuantityInSelectedFolderAndCacheIt(): Int {
@@ -76,7 +86,8 @@ class MainNavGraphViewModel @Inject constructor() : ViewModel() {
         if (foundDuplicatesList == null)
             throw Exception("foundDuplicatesList cannot be null here")
 
-        mURIsContainDuplicatesPriorityList = getFoldersURIsContainDuplicatesListUseCase.execute(foundDuplicatesList!!)
+        mURIsContainDuplicatesPriorityList =
+            getFoldersURIsContainDuplicatesListUseCase.execute(foundDuplicatesList!!)
     }
 
     fun setDuplicatesHighlightedLinesByPriorityList() {
@@ -85,39 +96,34 @@ class MainNavGraphViewModel @Inject constructor() : ViewModel() {
         if (mURIsContainDuplicatesPriorityList == null)
             throw Exception("mURIsContainDuplicatesPriorityList cannot be null here")
 
-        foundDuplicatesList!!.map { duplicate ->
-            var highestPriority = Int.MAX_VALUE
-            var indexOfHighestPriorityUriIndexFound = 0
-
-            duplicate.duplicateFilesInnerList.mapIndexed { index, storageFile ->
-                val currentPriority =
-                    mURIsContainDuplicatesPriorityList!!.indexOf(storageFile.file.uri.removeFileFromUri())
-                if (currentPriority < highestPriority) {
-                    highestPriority = currentPriority
-                    indexOfHighestPriorityUriIndexFound = index
-                }
-            }
-            duplicate.highlightedLineIndex = indexOfHighestPriorityUriIndexFound
-        }
+        setDuplicatesHighlightedLinesByPriorityListUseCase.execute(
+            foundDuplicatesList!!,
+            mURIsContainDuplicatesPriorityList!!
+        )
     }
 
     fun removeDuplicates() {
         if (foundDuplicatesList == null)
             throw Exception("foundDuplicatesList cannot be null here")
 
-        foundDuplicatesList!!.map { duplicate ->
-            duplicate.duplicateFilesInnerList.mapIndexed { index, storageFile ->
-                if (index != duplicate.highlightedLineIndex) {
-                    removedBytes.value = removedBytes.value?.plus(storageFile.file.length())
-                    storageFile.file.delete()
-                }
+        removeDuplicatesUseCase.execute(foundDuplicatesList!!)
+    }
+
+    fun collectRemovingProgressFlow() {
+        viewModelScope.launch(Dispatchers.Default + SupervisorJob()) {
+            val progressFlow = removeDuplicatesUseCase.getRemovingProgressFlow()
+            progressFlow.collect {
+                val numberOfRemovedFiles = it.first
+                val numberOfRemovedBytes = it.second
+                numberOfRemovedFilesLD.postValue(numberOfRemovedFiles)
+                numberOfRemovedBytesLD.postValue(numberOfRemovedBytes)
             }
         }
     }
 
-    fun collectProgressFlow() {
+    fun collectFindingProgressFlow() {
         viewModelScope.launch(Dispatchers.Default + SupervisorJob()) {
-            val progressFlow = getDuplicatesListUseCase.getProgressFlow()
+            val progressFlow = getDuplicatesListUseCase.getFindingProgressFlow()
             progressFlow.collect {
                 numberOfProcessedFilesLD.postValue(it)
                 if (it == itemsQuantityInSelectedFolder)

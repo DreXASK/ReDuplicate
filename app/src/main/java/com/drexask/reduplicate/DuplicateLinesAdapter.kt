@@ -25,14 +25,16 @@ class DuplicateLinesAdapter(
         return DuplicateLinesViewHolder(inflater.inflate(R.layout.list_item_duplicate_line, parent, false))
     }
 
+    @SuppressLint("NotifyDataSetChanged") // Must to refresh all data set
     override fun onBindViewHolder(holder: DuplicateLinesViewHolder, position: Int) {
-        holder.bind(getItem(position), getHighlightedPropertyValue(position), ::highlightLineByPosition)
-    }
+        holder.bind(getItem(position), getHighlightedPropertyValue(position))
 
-    @SuppressLint("NotifyDataSetChanged") // We must refresh the whole set
-    fun highlightLineByPosition(position: Int) {
-        duplicateWithHighlightedLine.highlightedLineIndex = position
-        notifyDataSetChanged()
-    }
+        holder.binding.apply {
+            cardView.setOnClickListener {
+                duplicateWithHighlightedLine.highlightedLineIndex = position
+                notifyDataSetChanged()
+            }
+        }
 
+    }
 }

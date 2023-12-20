@@ -13,9 +13,10 @@
     <string name="current_progress">%1$d from %2$d</string>
 
     <!-- fragment_duplicate_remover -->
-    <string name="folders_priority_settings">Folders priority settings</string>
-    <string name="apply_priority_settings">Apply settings</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="btn_folders_priority_settings">Folders priority settings</string>
+    <string name="btn_apply_priority_settings">Apply settings</string>
+    <string name="btn_remove_duplicates">Remove duplicates</string>
+    <string name="results_files">"Deleted %1$d files"</string>
+    <string name="results_bytes">"(%1$s)"</string>
 
 </resources>
