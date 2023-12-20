@@ -34,16 +34,15 @@ class DuplicateFinderFragment : Fragment() {
     ): View {
         _binding = FragmentDuplicateFinderBinding.inflate(layoutInflater)
 
-        viewModel.folderFileDoc.value = context?.let { context ->
-            viewModel.treeUri.value?.let {treeUri ->
+        viewModel.folderFileDocLD.value = context?.let { context ->
+            viewModel.treeUriLD.value?.let { treeUri ->
                 DocumentFile.fromTreeUri(context, treeUri)
             }
         }
 
         setupListeners()
-        viewModel.treeUri.observe(viewLifecycleOwner, treeUriObserver)
-        viewModel.numberOfProcessedFiles.observe(viewLifecycleOwner, numberOfProcessedFilesObserver)
-
+        viewModel.treeUriLD.observe(viewLifecycleOwner, treeUriObserver)
+        viewModel.numberOfProcessedFilesLD.observe(viewLifecycleOwner, numberOfProcessedFilesObserver)
 
         return binding.root
     }
@@ -68,9 +67,8 @@ class DuplicateFinderFragment : Fragment() {
     private fun clickLaunch() {
         binding.btnLaunch.setOnClickListener {
 
-            if (viewModel.useFileNames.value == false
-                && viewModel.useFileWeights.value == false
-                && viewModel.useFileHashes.value == false) {
+            if (viewModel.useFileNamesLD.value == false
+                && viewModel.useFileWeightsLD.value == false) {
                 showSettingsDialog()
                 return@setOnClickListener
             }
@@ -78,18 +76,21 @@ class DuplicateFinderFragment : Fragment() {
             binding.progressCircular.visibility = View.VISIBLE
 
             CoroutineScope(Dispatchers.IO).launch {
-
                 binding.progressCircular.isIndeterminate = true
                 viewModel.scanFolder()
-                binding.progressCircular.max = viewModel.getItemsQuantityInSelectedFolderAndRememberIt()
+                binding.progressCircular.max = viewModel.getItemsQuantityInSelectedFolderAndCacheIt()
                 binding.progressCircular.isIndeterminate = false
 
                 viewModel.collectProgressFlow()
                 viewModel.getDuplicates()
+                viewModel.getURIsPrioritySet()
 
-                withContext(Dispatchers.Main) {
-                    findNavController().navigate(R.id.action_duplicateFinderFragment_to_duplicateRemoverFragment)
-                }
+                if (viewModel.foundDuplicatesList?.isEmpty() == true)
+                    TODO("Not implemented")
+                else
+                    withContext(Dispatchers.Main) {
+                        findNavController().navigate(R.id.action_duplicateFinderFragment_to_duplicateRemoverFragment)
+                    }
             }
         }
     }

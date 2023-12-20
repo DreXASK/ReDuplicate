@@ -1,16 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     tools:context=".presentation.ui.fragments.DuplicateRemoverFragment">
 
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_duplicate_cards"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="10dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@+id/btn_go_to_priority_settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/btn_go_to_priority_settings"
+        style="@style/OutlinedButton.WithText"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-</LinearLayout>
+        android:text="@string/folders_priority_settings"
+        app:icon="@drawable/baseline_build_circle_24"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout3"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/btn_go_to_priority_settings"
+        app:layout_constraintStart_toStartOf="@+id/btn_go_to_priority_settings">
+
+        <Button
+            android:id="@+id/btn_back_to_duplicate_finder"
+            style="@style/OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            app:icon="@drawable/round_chevron_left_24" />
+
+        <Button
+            android:id="@+id/btn_apply_priority_settings"
+            style="@style/OutlinedButton.WithText"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="@string/apply_priority_settings"
+            app:icon="@drawable/baseline_auto_fix_high_24" />
+
+        <Button
+            android:id="@+id/btn_go_next"
+            style="@style/OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_horizontal|center_vertical"
+            app:icon="@drawable/round_chevron_right_24" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

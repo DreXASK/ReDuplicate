@@ -11,8 +11,11 @@
     <string name="use_file_hash_to_find_duplicates">File hashes</string>
     <string name="select_methods_to_find_duplicates">Select methods to find duplicates</string>
     <string name="current_progress">%1$d from %2$d</string>
+
+    <!-- fragment_duplicate_remover -->
+    <string name="folders_priority_settings">Folders priority settings</string>
+    <string name="apply_priority_settings">Apply settings</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-
 
 </resources>

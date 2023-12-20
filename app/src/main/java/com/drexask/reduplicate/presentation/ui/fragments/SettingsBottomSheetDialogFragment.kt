@@ -37,38 +37,27 @@ class SettingsBottomSheetDialogFragment(@LayoutRes layoutRes: Int): BottomSheetD
 
     private fun setupListeners() {
         clickFileNames()
-        clickFileHashes()
         clickFileWeights()
     }
 
     private fun clickFileNames() {
         binding.chipFileNames.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.useFileNames.value = isChecked
-        }
-    }
-    private fun clickFileHashes() {
-        binding.chipFileHashes.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.useFileHashes.value = isChecked
+            viewModel.useFileNamesLD.value = isChecked
         }
     }
     private fun clickFileWeights() {
         binding.chipFileWeights.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.useFileWeights.value = isChecked
+            viewModel.useFileWeightsLD.value = isChecked
         }
     }
 
     private fun setupObservers() {
-        viewModel.useFileNames.observe(this, useFileNamesObserver)
-        viewModel.useFileHashes.observe(this, useFileHashesObserver)
-        viewModel.useFileWeights.observe(this, useFileWeightsObserver)
+        viewModel.useFileNamesLD.observe(this, useFileNamesObserver)
+        viewModel.useFileWeightsLD.observe(this, useFileWeightsObserver)
     }
 
     private val useFileNamesObserver = Observer<Boolean> {
         binding.chipFileNames.isChecked = it
-    }
-
-    private val useFileHashesObserver = Observer<Boolean> {
-        binding.chipFileHashes.isChecked = it
     }
 
     private val useFileWeightsObserver = Observer<Boolean> {

@@ -6,10 +6,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.navigation.fragment.findNavController
 import com.drexask.reduplicate.DuplicateCardsAdapter
 import com.drexask.reduplicate.MainNavGraphViewModel
 import com.drexask.reduplicate.R
-import com.drexask.reduplicate.databinding.FragmentDuplicateFinderBinding
 import com.drexask.reduplicate.databinding.FragmentDuplicateRemoverBinding
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -29,15 +29,27 @@ class DuplicateRemoverFragment : Fragment() {
         _binding = FragmentDuplicateRemoverBinding.inflate(layoutInflater)
 
         setupRecyclerView()
-
-        viewModel.getURIsPrioritySet()
-        viewModel.uRIsContainDuplicatesPrioritySet?.map {
-            println(it.lastPathSegment)
-        }
-
-
+        setupListeners()
 
         return binding.root
+    }
+
+    private fun setupListeners() {
+        clickGoToFoldersPrioritySettings()
+        clickApplyPrioritySettings()
+    }
+
+    private fun clickGoToFoldersPrioritySettings() {
+        binding.btnGoToPrioritySettings.setOnClickListener {
+            findNavController().navigate(R.id.action_duplicateRemoverFragment_to_folderPrioritySettingsFragment)
+        }
+    }
+
+    private fun clickApplyPrioritySettings() {
+        binding.btnApplyPrioritySettings.setOnClickListener {
+            viewModel.setDuplicatesHighlightedLinesByPriorityList()
+            binding.rvDuplicateCards.adapter?.notifyDataSetChanged() // TODO("Need to change this to DiffUtil")
+        }
     }
 
     private fun setupRecyclerView() {

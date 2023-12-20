@@ -2,14 +2,19 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="OutlinedButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
-        <item name="iconPadding">0dp</item>
-        <item name="android:textSize">30sp</item>
         <item name="iconSize">60dp</item>
+        <item name="iconPadding">0dp</item>
         <item name="android:insetTop">0dp</item>
         <item name="android:insetBottom">0dp</item>
         <item name="android:paddingLeft">12dp</item>
         <item name="android:paddingRight">12dp</item>
+        <item name="iconGravity">textStart</item>
+    </style>
 
+    <style name="OutlinedButton.WithText" parent="OutlinedButton">
+        <item name="android:textSize">24sp</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="iconPadding">15dp</item>
     </style>
 
     <style name="BigLaunchButton" parent="Widget.Material3.Button.IconButton.Filled.Tonal">
@@ -35,7 +40,5 @@
     <style name="CustomBottomSheetDialogStyle" parent="Widget.Design.BottomSheet.Modal">
         <item name="android:background">@android:color/transparent</item>
     </style>
-
-
 
 </resources>

@@ -4,8 +4,6 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import com.drexask.reduplicate.domain.models.Duplicate
 import com.drexask.reduplicate.domain.models.DuplicateWithHighlightedLine
 
 
@@ -20,7 +18,7 @@ class DuplicateCardsAdapter(
     private fun getItem(position: Int): DuplicateWithHighlightedLine = duplicatesList[position]
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DuplicateCardsViewHolder {
-        return DuplicateCardsViewHolder(inflater.inflate(R.layout.list_item_duplicates_card, parent, false))
+        return DuplicateCardsViewHolder(inflater.inflate(R.layout.list_item_duplicate_card, parent, false))
     }
 
     override fun onBindViewHolder(holder: DuplicateCardsViewHolder, position: Int) {

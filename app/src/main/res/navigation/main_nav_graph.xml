@@ -27,5 +27,14 @@
         android:id="@+id/duplicateRemoverFragment"
         android:name="com.drexask.reduplicate.presentation.ui.fragments.DuplicateRemoverFragment"
         android:label="fragment_duplicate_remover"
-        tools:layout="@layout/fragment_duplicate_remover" />
+        tools:layout="@layout/fragment_duplicate_remover" >
+        <action
+            android:id="@+id/action_duplicateRemoverFragment_to_folderPrioritySettingsFragment"
+            app:destination="@id/folderPrioritySettingsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/folderPrioritySettingsFragment"
+        android:name="com.drexask.reduplicate.presentation.ui.fragments.FolderPrioritySettingsFragment"
+        android:label="fragment_folder_priority_settings"
+        tools:layout="@layout/fragment_folder_priority_settings" />
 </navigation>
