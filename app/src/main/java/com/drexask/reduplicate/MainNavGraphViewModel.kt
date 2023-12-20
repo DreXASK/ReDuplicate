@@ -30,15 +30,18 @@ class MainNavGraphViewModel @Inject constructor() : ViewModel() {
     val treeUriLD = MutableLiveData<Uri>()
     val folderFileDocLD = MutableLiveData<DocumentFile>()
 
-    val useFileNamesLD = MutableLiveData<Boolean>().also { it.value = true }
-    val useFileWeightsLD = MutableLiveData<Boolean>().also { it.value = false }
+    val useFileNamesLD = MutableLiveData<Boolean>().apply { value = true }
+    val useFileWeightsLD = MutableLiveData<Boolean>().apply { value = false }
 
     var foundDuplicatesList: List<DuplicateWithHighlightedLine>? = null
     var mURIsContainDuplicatesPriorityList: MutableList<Uri>? = null
 
     private var scannedFolder: StorageFolder? = null
     private var itemsQuantityInSelectedFolder: Int? = null
+
     val numberOfProcessedFilesLD = MutableLiveData<Int>()
+    val removedBytes = MutableLiveData<Long>().apply { value = 0L }
+
 
     fun scanFolder() {
         if (folderFileDocLD.value == null)
@@ -87,13 +90,28 @@ class MainNavGraphViewModel @Inject constructor() : ViewModel() {
             var indexOfHighestPriorityUriIndexFound = 0
 
             duplicate.duplicateFilesInnerList.mapIndexed { index, storageFile ->
-                val currentPriority = mURIsContainDuplicatesPriorityList!!.indexOf(storageFile.file.uri.removeFileFromUri())
+                val currentPriority =
+                    mURIsContainDuplicatesPriorityList!!.indexOf(storageFile.file.uri.removeFileFromUri())
                 if (currentPriority < highestPriority) {
                     highestPriority = currentPriority
                     indexOfHighestPriorityUriIndexFound = index
                 }
-
+            }
             duplicate.highlightedLineIndex = indexOfHighestPriorityUriIndexFound
+        }
+    }
+
+    fun removeDuplicates() {
+        if (foundDuplicatesList == null)
+            throw Exception("foundDuplicatesList cannot be null here")
+
+        foundDuplicatesList!!.map { duplicate ->
+            duplicate.duplicateFilesInnerList.mapIndexed { index, storageFile ->
+                if (index != duplicate.highlightedLineIndex) {
+                    removedBytes.value = removedBytes.value?.plus(storageFile.file.length())
+                    storageFile.file.delete()
+                }
+            }
         }
     }
 

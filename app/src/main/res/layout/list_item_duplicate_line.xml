@@ -7,28 +7,20 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
+        app:cardBackgroundColor="@color/card_view_switchable"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="5dp"
         app:cardElevation="5dp">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/tv_duplicate_uri"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1">
+            android:layout_margin="5dp"
+            android:textSize="20sp"
+            tools:text="DuplicateUri" />
 
-            <Button
-                android:id="@+id/btn_select_this_duplicate_line"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Select this!!!" />
-
-            <TextView
-                android:id="@+id/tv_duplicate_uri"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                tools:text="DuplicateUri" />
-        </LinearLayout>
     </androidx.cardview.widget.CardView>
 
 </FrameLayout>

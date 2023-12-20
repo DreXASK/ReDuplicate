@@ -20,21 +20,29 @@
         android:label="fragment_duplicate_finder"
         tools:layout="@layout/fragment_duplicate_finder" >
         <action
-            android:id="@+id/action_duplicateFinderFragment_to_duplicateRemoverFragment"
-            app:destination="@id/duplicateRemoverFragment" />
+            android:id="@+id/action_duplicateFinderFragment_to_duplicatePrioritySelectorFragment"
+            app:destination="@id/duplicatePrioritySelectorFragment" />
     </fragment>
     <fragment
-        android:id="@+id/duplicateRemoverFragment"
-        android:name="com.drexask.reduplicate.presentation.ui.fragments.DuplicateRemoverFragment"
-        android:label="fragment_duplicate_remover"
-        tools:layout="@layout/fragment_duplicate_remover" >
+        android:id="@+id/duplicatePrioritySelectorFragment"
+        android:name="com.drexask.reduplicate.presentation.ui.fragments.DuplicatePrioritySelectorFragment"
+        android:label="fragment_duplicate_priority_selector"
+        tools:layout="@layout/fragment_duplicate_priority_selector" >
         <action
-            android:id="@+id/action_duplicateRemoverFragment_to_folderPrioritySettingsFragment"
+            android:id="@+id/action_duplicatePrioritySelectorFragment_to_folderPrioritySettingsFragment"
             app:destination="@id/folderPrioritySettingsFragment" />
+        <action
+            android:id="@+id/action_duplicatePrioritySelectorFragment_to_duplicateRemoverFragment"
+            app:destination="@id/duplicateRemoverFragment" />
     </fragment>
     <fragment
         android:id="@+id/folderPrioritySettingsFragment"
         android:name="com.drexask.reduplicate.presentation.ui.fragments.FolderPrioritySettingsFragment"
         android:label="fragment_folder_priority_settings"
         tools:layout="@layout/fragment_folder_priority_settings" />
+    <fragment
+        android:id="@+id/duplicateRemoverFragment"
+        android:name="com.drexask.reduplicate.presentation.ui.fragments.DuplicateRemoverFragment"
+        android:label="fragment_duplicate_remover"
+        tools:layout="@layout/fragment_duplicate_remover" />
 </navigation>

@@ -26,8 +26,7 @@ class DuplicateLinesAdapter(
     }
 
     override fun onBindViewHolder(holder: DuplicateLinesViewHolder, position: Int) {
-        val color = if (getHighlightedPropertyValue(position)) Color.RED else Color.GRAY
-        holder.bind(getItem(position), color, ::highlightLineByPosition)
+        holder.bind(getItem(position), getHighlightedPropertyValue(position), ::highlightLineByPosition)
     }
 
     @SuppressLint("NotifyDataSetChanged") // We must refresh the whole set

@@ -89,13 +89,11 @@ class DuplicateFinderFragment : Fragment() {
                     TODO("Not implemented")
                 else
                     withContext(Dispatchers.Main) {
-                        findNavController().navigate(R.id.action_duplicateFinderFragment_to_duplicateRemoverFragment)
+                        findNavController().navigate(R.id.action_duplicateFinderFragment_to_duplicatePrioritySelectorFragment)
                     }
             }
         }
     }
-
-
 
     private fun clickOpenSettings() {
         binding.btnSettings.setOnClickListener {
