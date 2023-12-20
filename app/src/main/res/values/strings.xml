@@ -11,6 +11,7 @@
     <string name="use_file_hash_to_find_duplicates">File hashes</string>
     <string name="select_methods_to_find_duplicates">Select methods to find duplicates</string>
     <string name="current_progress">%1$d from %2$d</string>
+    <string name="no_duplicates_found">No duplicates found</string>
 
     <!-- fragment_duplicate_remover -->
     <string name="btn_folders_priority_settings">Folders priority settings</string>
@@ -18,5 +19,6 @@
     <string name="btn_remove_duplicates">Remove duplicates</string>
     <string name="results_files">"Deleted %1$d files"</string>
     <string name="results_bytes">"(%1$s)"</string>
+
 
 </resources>

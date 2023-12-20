@@ -82,14 +82,11 @@ class DuplicateRemoverFragment : Fragment() {
 
     private val removedFilesObserver = Observer<Int> {
         binding.tvNumberOfFiles.text = getString(R.string.results_files, it)
-        println("Files $it")
     }
 
     private val removedBytesObserver = Observer<Long> {
         val result = convertBytesUseCase.execute(it)
         val resultString = "${"%.2f".format(result.first)} ${result.second}"
         binding.tvNumberOfBytes.text = getString(R.string.results_bytes, resultString)
-        println("Bytes $it")
     }
-
 }

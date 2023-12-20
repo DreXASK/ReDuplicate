@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Observer
@@ -42,14 +43,20 @@ class DuplicateFinderFragment : Fragment() {
 
         setupListeners()
         viewModel.treeUriLD.observe(viewLifecycleOwner, treeUriObserver)
-        viewModel.numberOfProcessedFilesLD.observe(viewLifecycleOwner, numberOfProcessedFilesObserver)
+        viewModel.numberOfProcessedFilesLD.observe(
+            viewLifecycleOwner,
+            numberOfProcessedFilesObserver
+        )
 
         return binding.root
     }
 
     private fun showSettingsDialog() {
         val dialog = SettingsBottomSheetDialogFragment(R.layout.bottom_sheet_dialog_settings)
-        dialog.setStyle(BottomSheetDialogFragment.STYLE_NORMAL, R.style.CustomBottomSheetDialogTheme)
+        dialog.setStyle(
+            BottomSheetDialogFragment.STYLE_NORMAL,
+            R.style.CustomBottomSheetDialogTheme
+        )
         dialog.show(childFragmentManager, null)
     }
 
@@ -64,11 +71,13 @@ class DuplicateFinderFragment : Fragment() {
             findNavController().popBackStack()
         }
     }
+
     private fun clickLaunch() {
         binding.btnLaunch.setOnClickListener {
 
             if (viewModel.useFileNamesLD.value == false
-                && viewModel.useFileWeightsLD.value == false) {
+                && viewModel.useFileWeightsLD.value == false
+            ) {
                 showSettingsDialog()
                 return@setOnClickListener
             }
@@ -78,7 +87,8 @@ class DuplicateFinderFragment : Fragment() {
             CoroutineScope(Dispatchers.IO).launch {
                 binding.progressCircular.isIndeterminate = true
                 viewModel.scanFolder()
-                binding.progressCircular.max = viewModel.getItemsQuantityInSelectedFolderAndCacheIt()
+                binding.progressCircular.max =
+                    viewModel.getItemsQuantityInSelectedFolderAndCacheIt()
                 binding.progressCircular.isIndeterminate = false
 
                 viewModel.collectFindingProgressFlow()
@@ -86,8 +96,12 @@ class DuplicateFinderFragment : Fragment() {
                 viewModel.getURIsPrioritySet()
 
                 if (viewModel.foundDuplicatesList?.isEmpty() == true)
-                    TODO("Not implemented")
-                else
+                    withContext(Dispatchers.Main) { //TODO("Change that behavior")
+                        Toast.makeText(
+                            context,
+                            getString(R.string.no_duplicates_found), Toast.LENGTH_LONG
+                        ).show()
+                    } else
                     withContext(Dispatchers.Main) {
                         findNavController().navigate(R.id.action_duplicateFinderFragment_to_duplicatePrioritySelectorFragment)
                     }
