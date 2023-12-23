@@ -5,9 +5,12 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.addCallback
+import androidx.fragment.app.DialogFragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.drexask.reduplicate.BackButtonDialogFragment
 import com.drexask.reduplicate.MainNavGraphViewModel
 import com.drexask.reduplicate.R
 import com.drexask.reduplicate.databinding.FragmentDuplicateRemoverBinding
@@ -38,7 +41,21 @@ class DuplicateRemoverFragment : Fragment() {
         setupObservers()
         setupListeners()
 
+        changeBackButtonBehavior()
+
         return binding.root
+    }
+
+    private fun changeBackButtonBehavior() {
+        val onBackPressedDispatcher = activity?.onBackPressedDispatcher
+        onBackPressedDispatcher?.addCallback {
+            showGoBackDialogFragment()
+        }
+    }
+
+    private fun showGoBackDialogFragment() {
+        val dialogFragment = BackButtonDialogFragment("some message", R.layout.dialog_fragment_back_button)
+        dialogFragment.show(childFragmentManager, null)
     }
 
     private fun setupObservers() {
@@ -53,7 +70,7 @@ class DuplicateRemoverFragment : Fragment() {
 
     private fun clickGoBack() {
         binding.btnGoBack.setOnClickListener {
-            findNavController().popBackStack()
+            activity?.onBackPressedDispatcher?.onBackPressed()
         }
     }
 
@@ -89,4 +106,5 @@ class DuplicateRemoverFragment : Fragment() {
         val resultString = "${"%.2f".format(result.first)} ${result.second}"
         binding.tvNumberOfBytes.text = getString(R.string.results_bytes, resultString)
     }
+
 }
