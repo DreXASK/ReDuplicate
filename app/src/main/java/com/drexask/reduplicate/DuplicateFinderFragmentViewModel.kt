@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.drexask.reduplicate.domain.models.DuplicateWithHighlightedLine
 import com.drexask.reduplicate.domain.models.DuplicatesFindSettings
 import com.drexask.reduplicate.domain.usecases.GetDuplicatesListUseCase
-import com.drexask.reduplicate.domain.usecases.GetFoldersURIsContainDuplicatesListUseCase
 import com.drexask.reduplicate.storagetools.StorageFolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,13 +21,10 @@ import javax.inject.Inject
 class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
 
     @Inject
-    lateinit var getFoldersURIsContainDuplicatesListUseCase: GetFoldersURIsContainDuplicatesListUseCase
-
-    @Inject
     lateinit var getDuplicatesListUseCase: GetDuplicatesListUseCase
 
     val treeUriLD = MutableLiveData<Uri>()
-    val folderFileDocLD = MutableLiveData<DocumentFile>()
+    lateinit var folderFileDoc: DocumentFile
 
     val numberOfProcessedFilesLD = MutableLiveData<Int>()
 
@@ -39,26 +35,22 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
     private var scannedFolder: StorageFolder? = null
     private var itemsQuantityInSelectedFolder: Int? = null
 
-    var foundDuplicatesList: List<DuplicateWithHighlightedLine>? = null
-    //var URIsContainDuplicatesPriorityList: MutableList<Uri>? = null
 
     fun scanFolder() {
-        if (folderFileDocLD.value == null)
-            throw Exception("folderFileDoc.value cannot be null here")
         scannedFolder =
-            StorageFolder(folderFileDocLD.value!!).also { it.scanFolderForStoredItems() }
+            StorageFolder(folderFileDoc).also { it.scanFolderForStoredItems() }
     }
 
-    fun getItemsQuantityInSelectedFolderAndCacheIt(): Int {
+    fun scanForItemsQuantityInSelectedFolderAndCacheIt(): Int {
         if (scannedFolder == null)
             throw Exception("scannedFolder cannot be null here")
 
-        return itemsQuantityInSelectedFolder ?: scannedFolder!!.getStoredFilesQuantity().also {
+        return scannedFolder!!.getStoredFilesQuantity().also {
             itemsQuantityInSelectedFolder = it
         }
     }
 
-    suspend fun getDuplicates() {
+    suspend fun getDuplicates() : List<DuplicateWithHighlightedLine> {
         if (scannedFolder == null)
             throw Exception("scannedFolder cannot be null here")
 
@@ -67,9 +59,10 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
             useFileWeightsLD.value ?: throw Exception("useFileWeights.value cannot be null here")
         )
 
-        viewModelScope.async(Dispatchers.Default) {
-            foundDuplicatesList = getDuplicatesListUseCase.execute(settings, scannedFolder!!)
-        }.await()
+        val result = viewModelScope.async(Dispatchers.Default) {
+            getDuplicatesListUseCase.execute(settings, scannedFolder!!)
+        }
+        return result.await()
     }
 
     fun collectFindingProgressFlow() {
@@ -82,13 +75,4 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
             }
         }
     }
-
-/*    fun getURIsPrioritySet() {
-        if (foundDuplicatesList == null)
-            throw Exception("foundDuplicatesList cannot be null here")
-
-        URIsContainDuplicatesPriorityList =
-            getFoldersURIsContainDuplicatesListUseCase.execute(foundDuplicatesList!!)
-    }*/
-
 }

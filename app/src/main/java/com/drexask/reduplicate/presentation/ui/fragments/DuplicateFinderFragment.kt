@@ -8,13 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.drexask.reduplicate.DuplicateFinderFragmentViewModel
 import com.drexask.reduplicate.MainNavGraphViewModel
 import com.drexask.reduplicate.R
+import com.drexask.reduplicate.TREE_URI
 import com.drexask.reduplicate.databinding.FragmentDuplicateFinderBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
@@ -26,8 +27,9 @@ import kotlinx.coroutines.withContext
 @AndroidEntryPoint
 class DuplicateFinderFragment : Fragment() {
 
-    //private val viewModel by hiltNavGraphViewModels<MainNavGraphViewModel>(R.id.main_graph)
-    private val viewModel: DuplicateFinderFragmentViewModel by viewModels()
+    private val mainViewModel by hiltNavGraphViewModels<MainNavGraphViewModel>(R.id.main_graph)
+
+    private val viewModel: DuplicateFinderFragmentViewModel by activityViewModels()
 
     private var _binding: FragmentDuplicateFinderBinding? = null
     private val binding get() = _binding!!
@@ -38,20 +40,35 @@ class DuplicateFinderFragment : Fragment() {
     ): View {
         _binding = FragmentDuplicateFinderBinding.inflate(layoutInflater)
 
-        viewModel.folderFileDocLD.value = context?.let { context ->
-            viewModel.treeUriLD.value?.let { treeUri ->
-                DocumentFile.fromTreeUri(context, treeUri)
-            }
-        }
-
+        setBundleDataToViewModel()
+        setupFolderFileDoc()
         setupListeners()
+        setupObservers()
+
+        return binding.root
+    }
+
+    private fun setBundleDataToViewModel() {
+        val bundle = arguments
+        val treeUri = bundle?.getParcelable<Uri>(TREE_URI)
+        viewModel.treeUriLD.value = treeUri
+    }
+
+    private fun setupFolderFileDoc() {
+        val context = requireContext()
+        viewModel.folderFileDoc =
+            viewModel.treeUriLD.value!!.let { treeUri ->
+                DocumentFile.fromTreeUri(context, treeUri)
+                    ?: throw Error("Something is wrong with the Uri")
+            }
+    }
+
+    private fun setupObservers() {
         viewModel.treeUriLD.observe(viewLifecycleOwner, treeUriObserver)
         viewModel.numberOfProcessedFilesLD.observe(
             viewLifecycleOwner,
             numberOfProcessedFilesObserver
         )
-
-        return binding.root
     }
 
     private fun showSettingsDialog() {
@@ -91,24 +108,26 @@ class DuplicateFinderFragment : Fragment() {
                 binding.progressCircular.isIndeterminate = true
                 viewModel.scanFolder()
                 binding.progressCircular.max =
-                    viewModel.getItemsQuantityInSelectedFolderAndCacheIt()
+                    viewModel.scanForItemsQuantityInSelectedFolderAndCacheIt()
                 binding.progressCircular.isIndeterminate = false
 
 
                 viewModel.collectFindingProgressFlow()
-                viewModel.getDuplicates()
+                mainViewModel.foundDuplicatesList = viewModel.getDuplicates().toMutableList()
                 //viewModel.getURIsPrioritySet()
 
-                if (viewModel.foundDuplicatesList?.isEmpty() == true)
+                if (mainViewModel.foundDuplicatesList.isEmpty())
                     withContext(Dispatchers.Main) { //TODO("Change that behavior")
                         Toast.makeText(
                             context,
                             getString(R.string.no_duplicates_found), Toast.LENGTH_LONG
                         ).show()
-                    } else
+                } else {
                     withContext(Dispatchers.Main) {
                         findNavController().navigate(R.id.action_duplicateFinderFragment_to_duplicatePrioritySelectorFragment)
                     }
+                }
+
             }
         }
     }
