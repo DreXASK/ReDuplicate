@@ -9,8 +9,6 @@ import com.drexask.reduplicate.domain.models.DuplicateWithHighlightedLine
 import com.drexask.reduplicate.domain.models.DuplicatesFindSettings
 import com.drexask.reduplicate.domain.usecases.GetDuplicatesListUseCase
 import com.drexask.reduplicate.domain.usecases.GetFoldersURIsContainDuplicatesListUseCase
-import com.drexask.reduplicate.domain.usecases.RemoveDuplicatesUseCase
-import com.drexask.reduplicate.domain.usecases.SetDuplicatesHighlightedLinesByPriorityListUseCase
 import com.drexask.reduplicate.storagetools.StorageFolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +19,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class MainNavGraphViewModel @Inject constructor() : ViewModel() {
+class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
 
     @Inject
     lateinit var getFoldersURIsContainDuplicatesListUseCase: GetFoldersURIsContainDuplicatesListUseCase
@@ -29,14 +27,10 @@ class MainNavGraphViewModel @Inject constructor() : ViewModel() {
     @Inject
     lateinit var getDuplicatesListUseCase: GetDuplicatesListUseCase
 
-    @Inject
-    lateinit var setDuplicatesHighlightedLinesByPriorityListUseCase: SetDuplicatesHighlightedLinesByPriorityListUseCase
-
-    @Inject
-    lateinit var removeDuplicatesUseCase: RemoveDuplicatesUseCase
-
     val treeUriLD = MutableLiveData<Uri>()
     val folderFileDocLD = MutableLiveData<DocumentFile>()
+
+    val numberOfProcessedFilesLD = MutableLiveData<Int>()
 
     // For settings
     val useFileNamesLD = MutableLiveData<Boolean>().apply { value = true }
@@ -46,12 +40,7 @@ class MainNavGraphViewModel @Inject constructor() : ViewModel() {
     private var itemsQuantityInSelectedFolder: Int? = null
 
     var foundDuplicatesList: List<DuplicateWithHighlightedLine>? = null
-    var URIsContainDuplicatesPriorityList: MutableList<Uri>? = null
-
-    val numberOfProcessedFilesLD = MutableLiveData<Int>()
-    val numberOfRemovedFilesLD = MutableLiveData<Int>()
-    val numberOfRemovedBytesLD = MutableLiveData<Long>()
-    var areDuplicatesRemoved = false
+    //var URIsContainDuplicatesPriorityList: MutableList<Uri>? = null
 
     fun scanFolder() {
         if (folderFileDocLD.value == null)
@@ -83,46 +72,6 @@ class MainNavGraphViewModel @Inject constructor() : ViewModel() {
         }.await()
     }
 
-    fun getURIsPrioritySet() {
-        if (foundDuplicatesList == null)
-            throw Exception("foundDuplicatesList cannot be null here")
-
-        URIsContainDuplicatesPriorityList =
-            getFoldersURIsContainDuplicatesListUseCase.execute(foundDuplicatesList!!)
-    }
-
-    fun setDuplicatesHighlightedLinesByPriorityList() {
-        if (foundDuplicatesList == null)
-            throw Exception("foundDuplicatesList cannot be null here")
-        if (URIsContainDuplicatesPriorityList == null)
-            throw Exception("mURIsContainDuplicatesPriorityList cannot be null here")
-
-        setDuplicatesHighlightedLinesByPriorityListUseCase.execute(
-            foundDuplicatesList!!,
-            URIsContainDuplicatesPriorityList!!
-        )
-    }
-
-    fun removeDuplicates() {
-        if (foundDuplicatesList == null)
-            throw Exception("foundDuplicatesList cannot be null here")
-
-        areDuplicatesRemoved = true
-        removeDuplicatesUseCase.execute(foundDuplicatesList!!)
-    }
-
-    fun collectRemovingProgressFlow() {
-        viewModelScope.launch(Dispatchers.Default + SupervisorJob()) {
-            val progressFlow = removeDuplicatesUseCase.getRemovingProgressFlow()
-            progressFlow.collect {
-                val numberOfRemovedFiles = it.first
-                val numberOfRemovedBytes = it.second
-                numberOfRemovedFilesLD.postValue(numberOfRemovedFiles)
-                numberOfRemovedBytesLD.postValue(numberOfRemovedBytes)
-            }
-        }
-    }
-
     fun collectFindingProgressFlow() {
         viewModelScope.launch(Dispatchers.Default + SupervisorJob()) {
             val progressFlow = getDuplicatesListUseCase.getFindingProgressFlow()
@@ -134,8 +83,12 @@ class MainNavGraphViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun removeAllDataInViewModel() {
+/*    fun getURIsPrioritySet() {
+        if (foundDuplicatesList == null)
+            throw Exception("foundDuplicatesList cannot be null here")
 
-    }
+        URIsContainDuplicatesPriorityList =
+            getFoldersURIsContainDuplicatesListUseCase.execute(foundDuplicatesList!!)
+    }*/
 
 }

@@ -9,15 +9,19 @@ import androidx.activity.addCallback
 import androidx.fragment.app.DialogFragment
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.withCreated
+import androidx.lifecycle.withResumed
 import androidx.navigation.fragment.findNavController
 import com.drexask.reduplicate.BackButtonDialogFragment
 import com.drexask.reduplicate.MainNavGraphViewModel
 import com.drexask.reduplicate.R
 import com.drexask.reduplicate.databinding.FragmentDuplicateRemoverBinding
 import com.drexask.reduplicate.domain.usecases.ConvertBytesUseCase
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -48,14 +52,38 @@ class DuplicateRemoverFragment : Fragment() {
 
     private fun changeBackButtonBehavior() {
         val onBackPressedDispatcher = activity?.onBackPressedDispatcher
-        onBackPressedDispatcher?.addCallback {
-            showGoBackDialogFragment()
+        onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
+            if (viewModel.areDuplicatesRemoved) {
+                showGoBackDialogFragment()
+            } else {
+                remove()
+                onBackPressedDispatcher.onBackPressed()
+            }
         }
     }
 
     private fun showGoBackDialogFragment() {
-        val dialogFragment = BackButtonDialogFragment("some message", R.layout.dialog_fragment_back_button)
-        dialogFragment.show(childFragmentManager, null)
+        val dialogFragment =
+            BackButtonDialogFragment()
+
+        CoroutineScope(Dispatchers.Main).launch {
+            dialogFragment.setStyle(
+                DialogFragment.STYLE_NORMAL,
+                R.style.CustomBottomSheetDialogTheme
+            )
+
+            dialogFragment.show(childFragmentManager, null)
+
+            dialogFragment.withResumed {
+                dialogFragment.setMessage(getString(R.string.dialog_fragment_back_button_message))
+                dialogFragment.setOnPositiveButtonListener {
+                    findNavController().popBackStack(R.id.folderPickerFragment, true)
+                }
+                dialogFragment.setOnNegativeButtonListener {
+                    dialogFragment.dialog?.cancel()
+                }
+            }
+        }
     }
 
     private fun setupObservers() {
@@ -77,21 +105,17 @@ class DuplicateRemoverFragment : Fragment() {
     private fun clickRemoveDuplicates() {
         binding.apply {
             btnRemoveDuplicates.setOnClickListener {
-                btnGoBack.isEnabled = false
-                CoroutineScope(Dispatchers.IO).launch {
+                CoroutineScope(Dispatchers.Main).launch {
+                    progressBarUp.visibility = View.VISIBLE
+                    progressBarDown.visibility = View.VISIBLE
 
-                    withContext(Dispatchers.Main) {
-                        progressBarUp.visibility = View.VISIBLE
-                        progressBarDown.visibility = View.VISIBLE
+                    withContext(Dispatchers.Default) {
+                        viewModel.collectRemovingProgressFlow()
+                        viewModel.removeDuplicates()
                     }
 
-                    viewModel.collectRemovingProgressFlow()
-                    viewModel.removeDuplicates()
-
-                    withContext(Dispatchers.Main) {
-                        progressBarUp.visibility = View.GONE
-                        progressBarDown.visibility = View.GONE
-                    }
+                    progressBarUp.visibility = View.GONE
+                    progressBarDown.visibility = View.GONE
                 }
             }
         }

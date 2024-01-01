@@ -49,12 +49,12 @@ class FolderPrioritySettingsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        if (viewModel.mURIsContainDuplicatesPriorityList == null)
+        if (viewModel.URIsContainDuplicatesPriorityList == null)
             throw Exception("viewModel.uRIsContainDuplicatesPriorityList cannot be null here")
 
         context?.let {
             val foldersPrioritySettingsAdapter =
-                FoldersPrioritySettingsAdapter(it, viewModel.mURIsContainDuplicatesPriorityList!!)
+                FoldersPrioritySettingsAdapter(it, viewModel.URIsContainDuplicatesPriorityList!!)
 
             binding.rvFoldersPrioritySettings.apply {
                 adapter = foldersPrioritySettingsAdapter
@@ -81,7 +81,7 @@ class FolderPrioritySettingsFragment : Fragment() {
                 val toPosition = target.adapterPosition
 
                 Collections.swap(
-                    viewModel.mURIsContainDuplicatesPriorityList!!,
+                    viewModel.URIsContainDuplicatesPriorityList!!,
                     fromPosition,
                     toPosition
                 )

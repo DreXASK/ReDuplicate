@@ -12,4 +12,8 @@
         <item name="bottomSheetStyle">@style/CustomBottomSheetDialogStyle</item>
     </style>
 
+    <style name="CustomDialogFragmentTheme" parent="Theme.MaterialComponents.Dialog" >
+        <item name="alertDialogStyle">@style/CustomDialogFragmentStyle</item>
+    </style>
+
 </resources>

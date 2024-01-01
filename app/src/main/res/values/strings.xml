@@ -19,6 +19,11 @@
     <string name="btn_remove_duplicates">Remove duplicates</string>
     <string name="results_files">"Deleted %1$d files"</string>
     <string name="results_bytes">"(%1$s)"</string>
+    <string name="dialog_fragment_back_button_message">You are going to back to the start screen</string>
+
+    <!-- dialog_fragment_back_button -->
+    <string name="btn_positive">Agree</string>
+    <string name="btn_negative">Cancel</string>
 
 
 </resources>

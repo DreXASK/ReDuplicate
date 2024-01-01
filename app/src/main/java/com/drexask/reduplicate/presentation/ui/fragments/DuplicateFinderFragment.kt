@@ -8,9 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
+import androidx.fragment.app.viewModels
 import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import com.drexask.reduplicate.DuplicateFinderFragmentViewModel
 import com.drexask.reduplicate.MainNavGraphViewModel
 import com.drexask.reduplicate.R
 import com.drexask.reduplicate.databinding.FragmentDuplicateFinderBinding
@@ -24,7 +26,8 @@ import kotlinx.coroutines.withContext
 @AndroidEntryPoint
 class DuplicateFinderFragment : Fragment() {
 
-    private val viewModel by hiltNavGraphViewModels<MainNavGraphViewModel>(R.id.main_graph)
+    //private val viewModel by hiltNavGraphViewModels<MainNavGraphViewModel>(R.id.main_graph)
+    private val viewModel: DuplicateFinderFragmentViewModel by viewModels()
 
     private var _binding: FragmentDuplicateFinderBinding? = null
     private val binding get() = _binding!!
@@ -91,9 +94,10 @@ class DuplicateFinderFragment : Fragment() {
                     viewModel.getItemsQuantityInSelectedFolderAndCacheIt()
                 binding.progressCircular.isIndeterminate = false
 
+
                 viewModel.collectFindingProgressFlow()
                 viewModel.getDuplicates()
-                viewModel.getURIsPrioritySet()
+                //viewModel.getURIsPrioritySet()
 
                 if (viewModel.foundDuplicatesList?.isEmpty() == true)
                     withContext(Dispatchers.Main) { //TODO("Change that behavior")

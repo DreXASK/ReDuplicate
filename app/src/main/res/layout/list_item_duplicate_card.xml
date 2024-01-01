@@ -28,7 +28,9 @@
                 android:id="@+id/rv_duplicate_lines"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/list_item_duplicate_line"
+                tools:itemCount="3"/>
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>

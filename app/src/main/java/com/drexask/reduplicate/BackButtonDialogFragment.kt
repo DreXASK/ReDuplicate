@@ -13,14 +13,14 @@ import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.navigation.fragment.findNavController
 import com.drexask.reduplicate.databinding.BottomSheetDialogSettingsBinding
 import com.drexask.reduplicate.databinding.DialogFragmentBackButtonBinding
+import dagger.hilt.android.AndroidEntryPoint
 
-class BackButtonDialogFragment(
-    private val message: String,
-    @LayoutRes contentLayoutId: Int
-): DialogFragment(contentLayoutId) {
+class BackButtonDialogFragment
+    : DialogFragment(R.layout.dialog_fragment_back_button) {
 
     private var _binding: DialogFragmentBackButtonBinding? = null
     private val binding get() = _binding!!
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -31,30 +31,29 @@ class BackButtonDialogFragment(
 
         _binding = view?.let { DialogFragmentBackButtonBinding.bind(it) }
 
-        setupListeners()
-        setMessage()
-
         return view
     }
 
-    private fun setMessage() {
+    fun setMessage(message: String) {
         binding.tvMessage.text = message
     }
 
-    private fun setupListeners() {
-        clickPositiveButton()
-        clickNegativeButton()
-    }
 
-    private fun clickPositiveButton() {
+    fun setOnPositiveButtonListener(callBack: () -> Unit) {
         binding.btnPositive.setOnClickListener {
-            findNavController().popBackStack()
+            callBack()
         }
     }
 
-    private fun clickNegativeButton() {
+    fun setOnNegativeButtonListener(callBack: () -> Unit) {
         binding.btnNegative.setOnClickListener {
-            dialog?.cancel()
+            callBack()
         }
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
+
 }
