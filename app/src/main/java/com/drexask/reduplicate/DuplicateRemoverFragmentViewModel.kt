@@ -15,6 +15,9 @@ import javax.inject.Inject
 class DuplicateRemoverFragmentViewModel @Inject constructor() : ViewModel() {
 
     @Inject
+    lateinit var mainActivitySharedData: MainActivitySharedData
+
+    @Inject
     lateinit var removeDuplicatesUseCase: RemoveDuplicatesUseCase
 
     var areDuplicatesRemoved = false

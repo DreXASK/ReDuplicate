@@ -8,23 +8,16 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.withCreated
 import androidx.lifecycle.withResumed
 import androidx.navigation.fragment.findNavController
-import com.drexask.reduplicate.BackButtonDialogFragment
 import com.drexask.reduplicate.DuplicateRemoverFragmentViewModel
-import com.drexask.reduplicate.MainNavGraphViewModel
 import com.drexask.reduplicate.R
 import com.drexask.reduplicate.databinding.FragmentDuplicateRemoverBinding
-import com.drexask.reduplicate.domain.models.DuplicateWithHighlightedLine
 import com.drexask.reduplicate.domain.usecases.ConvertBytesUseCase
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -35,7 +28,6 @@ class DuplicateRemoverFragment : Fragment() {
     @Inject
     lateinit var convertBytesUseCase: ConvertBytesUseCase
 
-    private val mainViewModel by hiltNavGraphViewModels<MainNavGraphViewModel>(R.id.main_graph)
     private val viewModel: DuplicateRemoverFragmentViewModel by viewModels()
 
     private var _binding: FragmentDuplicateRemoverBinding? = null
@@ -81,7 +73,7 @@ class DuplicateRemoverFragment : Fragment() {
             dialogFragment.withResumed {
                 dialogFragment.setMessage(getString(R.string.dialog_fragment_back_button_message))
                 dialogFragment.setOnPositiveButtonListener {
-                    mainViewModel.foundDuplicatesList.clear()
+                    viewModel.mainActivitySharedData.clearAllData()
                     findNavController().popBackStack(R.id.folderPickerFragment, false)
                 }
                 dialogFragment.setOnNegativeButtonListener {
@@ -116,7 +108,7 @@ class DuplicateRemoverFragment : Fragment() {
 
                     withContext(Dispatchers.Default) {
                         viewModel.collectRemovingProgressFlow()
-                        viewModel.removeDuplicates(mainViewModel.foundDuplicatesList)
+                        viewModel.removeDuplicates( viewModel.mainActivitySharedData.foundDuplicatesList!!)
                     }
 
                     progressBarUp.visibility = View.GONE

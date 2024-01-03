@@ -7,23 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.drexask.reduplicate.DuplicatePrioritySelectorViewModel
 import com.drexask.reduplicate.FoldersPrioritySettingsAdapter
-import com.drexask.reduplicate.MainNavGraphViewModel
-import com.drexask.reduplicate.R
 import com.drexask.reduplicate.databinding.FragmentFolderPrioritySettingsBinding
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Collections
 
 @AndroidEntryPoint
 class FolderPrioritySettingsFragment : Fragment() {
 
-    //private val viewModel by hiltNavGraphViewModels<MainNavGraphViewModel>(R.id.main_graph)
-    private val viewModel: DuplicatePrioritySelectorViewModel by activityViewModels()
+    private val viewModel: DuplicatePrioritySelectorViewModel by viewModels()
 
     private var _binding: FragmentFolderPrioritySettingsBinding? = null
     private val binding get() = _binding!!
@@ -54,7 +49,7 @@ class FolderPrioritySettingsFragment : Fragment() {
     private fun setupRecyclerView() {
         context?.let {
             val foldersPrioritySettingsAdapter =
-                FoldersPrioritySettingsAdapter(it, viewModel.uRIsContainDuplicatesPriorityList)
+                FoldersPrioritySettingsAdapter(it, viewModel.mainActivitySharedData.uRIsContainDuplicatesPriorityList!!)
 
             binding.rvFoldersPrioritySettings.apply {
                 adapter = foldersPrioritySettingsAdapter

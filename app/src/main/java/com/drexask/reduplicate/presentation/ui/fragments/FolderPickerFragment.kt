@@ -9,11 +9,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.viewModels
-import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
 import androidx.navigation.fragment.findNavController
-import com.drexask.reduplicate.DuplicateRemoverFragmentViewModel
-import com.drexask.reduplicate.MainNavGraphViewModel
 import com.drexask.reduplicate.R
 import com.drexask.reduplicate.TREE_URI
 import com.drexask.reduplicate.databinding.FragmentFolderPickerBinding

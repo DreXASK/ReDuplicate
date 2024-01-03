@@ -1,19 +1,12 @@
-package com.drexask.reduplicate
+package com.drexask.reduplicate.presentation.ui.fragments
 
-import android.app.Dialog
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.LayoutRes
-import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.DialogFragment
-import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
-import androidx.navigation.fragment.findNavController
-import com.drexask.reduplicate.databinding.BottomSheetDialogSettingsBinding
+import com.drexask.reduplicate.R
 import com.drexask.reduplicate.databinding.DialogFragmentBackButtonBinding
-import dagger.hilt.android.AndroidEntryPoint
 
 class BackButtonDialogFragment
     : DialogFragment(R.layout.dialog_fragment_back_button) {

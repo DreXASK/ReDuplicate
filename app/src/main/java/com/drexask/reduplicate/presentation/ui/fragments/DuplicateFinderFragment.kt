@@ -9,11 +9,10 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.activityViewModels
-import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import com.drexask.reduplicate.DuplicateFinderFragmentViewModel
-import com.drexask.reduplicate.MainNavGraphViewModel
 import com.drexask.reduplicate.R
 import com.drexask.reduplicate.TREE_URI
 import com.drexask.reduplicate.databinding.FragmentDuplicateFinderBinding
@@ -27,9 +26,7 @@ import kotlinx.coroutines.withContext
 @AndroidEntryPoint
 class DuplicateFinderFragment : Fragment() {
 
-    private val mainViewModel by hiltNavGraphViewModels<MainNavGraphViewModel>(R.id.main_graph)
-
-    private val viewModel: DuplicateFinderFragmentViewModel by activityViewModels()
+    private val viewModel: DuplicateFinderFragmentViewModel by viewModels()
 
     private var _binding: FragmentDuplicateFinderBinding? = null
     private val binding get() = _binding!!
@@ -95,8 +92,8 @@ class DuplicateFinderFragment : Fragment() {
     private fun clickLaunch() {
         binding.btnLaunch.setOnClickListener {
 
-            if (viewModel.useFileNamesLD.value == false
-                && viewModel.useFileWeightsLD.value == false
+            if (viewModel.mainActivitySharedData.useFileNamesLD.value == false
+                && viewModel.mainActivitySharedData.useFileWeightsLD.value == false
             ) {
                 showSettingsDialog()
                 return@setOnClickListener
@@ -113,16 +110,16 @@ class DuplicateFinderFragment : Fragment() {
 
 
                 viewModel.collectFindingProgressFlow()
-                mainViewModel.foundDuplicatesList = viewModel.getDuplicates().toMutableList()
-                //viewModel.getURIsPrioritySet()
+                viewModel.getDuplicates()
+                viewModel.getURIsPrioritySet()
 
-                if (mainViewModel.foundDuplicatesList.isEmpty())
+                if (viewModel.mainActivitySharedData.foundDuplicatesList!!.isEmpty())
                     withContext(Dispatchers.Main) { //TODO("Change that behavior")
                         Toast.makeText(
                             context,
                             getString(R.string.no_duplicates_found), Toast.LENGTH_LONG
                         ).show()
-                } else {
+                    } else {
                     withContext(Dispatchers.Main) {
                         findNavController().navigate(R.id.action_duplicateFinderFragment_to_duplicatePrioritySelectorFragment)
                     }

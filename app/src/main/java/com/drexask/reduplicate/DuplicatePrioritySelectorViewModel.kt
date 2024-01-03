@@ -15,30 +15,23 @@ import javax.inject.Singleton
 class DuplicatePrioritySelectorViewModel @Inject constructor() : ViewModel() {
 
     @Inject
-    lateinit var setDuplicatesHighlightedLinesByPriorityListUseCase: SetDuplicatesHighlightedLinesByPriorityListUseCase
+    lateinit var mainActivitySharedData: MainActivitySharedData
 
     @Inject
-    lateinit var getFoldersURIsContainDuplicatesListUseCase: GetFoldersURIsContainDuplicatesListUseCase
-
-    lateinit var uRIsContainDuplicatesPriorityList: MutableList<Uri>
+    lateinit var setDuplicatesHighlightedLinesByPriorityListUseCase: SetDuplicatesHighlightedLinesByPriorityListUseCase
 
     fun swapUriPriorities(fromPosition: Int, toPosition: Int) {
         Collections.swap(
-            uRIsContainDuplicatesPriorityList,
+            mainActivitySharedData.uRIsContainDuplicatesPriorityList!!,
             fromPosition,
             toPosition
         )
     }
 
-    fun getURIsPrioritySet(foundDuplicatesList: List<DuplicateWithHighlightedLine>) {
-        uRIsContainDuplicatesPriorityList =
-            getFoldersURIsContainDuplicatesListUseCase.execute(foundDuplicatesList)
-    }
-
-    fun setDuplicatesHighlightedLinesByPriorityList(foundDuplicatesList: List<DuplicateWithHighlightedLine>) {
+    fun setDuplicatesHighlightedLinesByPriorityList() {
         setDuplicatesHighlightedLinesByPriorityListUseCase.execute(
-            foundDuplicatesList,
-            uRIsContainDuplicatesPriorityList
+            mainActivitySharedData.foundDuplicatesList!!,
+            mainActivitySharedData.uRIsContainDuplicatesPriorityList!!
         )
     }
 }

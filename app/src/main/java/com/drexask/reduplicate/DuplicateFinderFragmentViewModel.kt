@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.drexask.reduplicate.domain.models.DuplicateWithHighlightedLine
 import com.drexask.reduplicate.domain.models.DuplicatesFindSettings
 import com.drexask.reduplicate.domain.usecases.GetDuplicatesListUseCase
+import com.drexask.reduplicate.domain.usecases.GetFoldersURIsContainDuplicatesListUseCase
 import com.drexask.reduplicate.storagetools.StorageFolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -21,6 +22,12 @@ import javax.inject.Inject
 class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
 
     @Inject
+    lateinit var getFoldersURIsContainDuplicatesListUseCase: GetFoldersURIsContainDuplicatesListUseCase
+
+    @Inject
+    lateinit var mainActivitySharedData: MainActivitySharedData
+
+    @Inject
     lateinit var getDuplicatesListUseCase: GetDuplicatesListUseCase
 
     val treeUriLD = MutableLiveData<Uri>()
@@ -28,13 +35,13 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
 
     val numberOfProcessedFilesLD = MutableLiveData<Int>()
 
-    // For settings
-    val useFileNamesLD = MutableLiveData<Boolean>().apply { value = true }
-    val useFileWeightsLD = MutableLiveData<Boolean>().apply { value = false }
-
     private var scannedFolder: StorageFolder? = null
     private var itemsQuantityInSelectedFolder: Int? = null
 
+    fun getURIsPrioritySet() {
+        mainActivitySharedData.uRIsContainDuplicatesPriorityList =
+            getFoldersURIsContainDuplicatesListUseCase.execute(mainActivitySharedData.foundDuplicatesList!!)
+    }
 
     fun scanFolder() {
         scannedFolder =
@@ -50,19 +57,18 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    suspend fun getDuplicates() : List<DuplicateWithHighlightedLine> {
+    suspend fun getDuplicates() {
         if (scannedFolder == null)
             throw Exception("scannedFolder cannot be null here")
 
         val settings = DuplicatesFindSettings(
-            useFileNamesLD.value ?: throw Exception("useFileNames.value cannot be null here"),
-            useFileWeightsLD.value ?: throw Exception("useFileWeights.value cannot be null here")
+             mainActivitySharedData.useFileNamesLD.value ?: throw Exception("useFileNames.value cannot be null here"),
+            mainActivitySharedData.useFileWeightsLD.value ?: throw Exception("useFileWeights.value cannot be null here")
         )
 
-        val result = viewModelScope.async(Dispatchers.Default) {
+        mainActivitySharedData.foundDuplicatesList = viewModelScope.async(Dispatchers.Default) {
             getDuplicatesListUseCase.execute(settings, scannedFolder!!)
-        }
-        return result.await()
+        }.await()
     }
 
     fun collectFindingProgressFlow() {
