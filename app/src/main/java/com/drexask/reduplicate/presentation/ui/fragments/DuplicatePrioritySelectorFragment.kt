@@ -5,16 +5,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.activityViewModels
+import androidx.activity.addCallback
+import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
-import androidx.hilt.navigation.fragment.hiltNavGraphViewModels
+import androidx.lifecycle.withResumed
 import androidx.navigation.fragment.findNavController
 import com.drexask.reduplicate.DuplicateCardsAdapter
 import com.drexask.reduplicate.DuplicatePrioritySelectorViewModel
-import com.drexask.reduplicate.MainActivitySharedData
 import com.drexask.reduplicate.R
 import com.drexask.reduplicate.databinding.FragmentDuplicatePrioritySelectorBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class DuplicatePrioritySelectorFragment : Fragment() {
@@ -30,6 +33,7 @@ class DuplicatePrioritySelectorFragment : Fragment() {
     ): View {
         _binding = FragmentDuplicatePrioritySelectorBinding.inflate(layoutInflater)
 
+        changeBackButtonBehavior()
         setupRecyclerView()
         setupListeners()
 
@@ -37,9 +41,45 @@ class DuplicatePrioritySelectorFragment : Fragment() {
     }
 
     private fun setupListeners() {
+        clickGoBackToDuplicatesFinder()
         clickGoToFoldersPrioritySettings()
         clickApplyPrioritySettings()
         clickGoToDuplicateRemover()
+    }
+
+    private fun clickGoBackToDuplicatesFinder() {
+        binding.btnBackToDuplicateFinder.setOnClickListener {
+            showGoBackDialogFragment()
+        }
+    }
+
+    private fun changeBackButtonBehavior() {
+        val onBackPressedDispatcher = activity?.onBackPressedDispatcher
+        onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
+            showGoBackDialogFragment()
+        }
+    }
+
+    private fun showGoBackDialogFragment() {
+        val dialogFragment = BackButtonDialogFragment()
+        dialogFragment.setStyle(
+            DialogFragment.STYLE_NORMAL,
+            R.style.CustomDialogFragmentTheme
+        )
+        dialogFragment.show(childFragmentManager, null)
+
+        CoroutineScope(Dispatchers.Main).launch {
+            dialogFragment.withResumed {
+                dialogFragment.setMessage(getString(R.string.fragment_duplicate_priority_selector_dialog_fragment_back_button_message))
+                dialogFragment.setOnPositiveButtonListener {
+                    viewModel.mainActivitySharedData.clearAllData()
+                    findNavController().popBackStack()
+                }
+                dialogFragment.setOnNegativeButtonListener {
+                    dialogFragment.dialog?.cancel()
+                }
+            }
+        }
     }
 
     private fun clickGoToFoldersPrioritySettings() {
@@ -70,5 +110,10 @@ class DuplicatePrioritySelectorFragment : Fragment() {
                 setHasFixedSize(true)
             }
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

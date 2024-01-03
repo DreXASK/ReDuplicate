@@ -59,19 +59,16 @@ class DuplicateRemoverFragment : Fragment() {
     }
 
     private fun showGoBackDialogFragment() {
-        val dialogFragment =
-            BackButtonDialogFragment()
-
-        CoroutineScope(Dispatchers.Main).launch {
+        val dialogFragment = BackButtonDialogFragment()
             dialogFragment.setStyle(
                 DialogFragment.STYLE_NORMAL,
                 R.style.CustomBottomSheetDialogTheme
             )
-
             dialogFragment.show(childFragmentManager, null)
 
+        CoroutineScope(Dispatchers.Main).launch {
             dialogFragment.withResumed {
-                dialogFragment.setMessage(getString(R.string.dialog_fragment_back_button_message))
+                dialogFragment.setMessage(getString(R.string.fragment_duplicate_remover_dialog_fragment_back_button_message))
                 dialogFragment.setOnPositiveButtonListener {
                     viewModel.mainActivitySharedData.clearAllData()
                     findNavController().popBackStack(R.id.folderPickerFragment, false)
@@ -128,4 +125,8 @@ class DuplicateRemoverFragment : Fragment() {
         binding.tvNumberOfBytes.text = getString(R.string.results_bytes, resultString)
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

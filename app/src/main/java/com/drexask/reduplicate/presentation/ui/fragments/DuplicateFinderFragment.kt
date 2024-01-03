@@ -11,15 +11,20 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.fragment.findNavController
 import com.drexask.reduplicate.DuplicateFinderFragmentViewModel
 import com.drexask.reduplicate.R
+import com.drexask.reduplicate.TAB
 import com.drexask.reduplicate.TREE_URI
 import com.drexask.reduplicate.databinding.FragmentDuplicateFinderBinding
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -30,6 +35,8 @@ class DuplicateFinderFragment : Fragment() {
 
     private var _binding: FragmentDuplicateFinderBinding? = null
     private val binding get() = _binding!!
+
+    var progressStateFlowJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -62,10 +69,14 @@ class DuplicateFinderFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.treeUriLD.observe(viewLifecycleOwner, treeUriObserver)
-        viewModel.numberOfProcessedFilesLD.observe(
-            viewLifecycleOwner,
-            numberOfProcessedFilesObserver
-        )
+
+        progressStateFlowJob = CoroutineScope(Dispatchers.Main).launch {
+            viewModel.getDuplicatesListUseCase.stateFlow.collect {
+                binding.progressCircular.progress = it
+                binding.tvCurrentProgress.text = getString(R.string.current_progress, it, viewModel.itemsQuantityInSelectedFolder)
+            }
+        }
+
     }
 
     private fun showSettingsDialog() {
@@ -108,23 +119,29 @@ class DuplicateFinderFragment : Fragment() {
                     viewModel.scanForItemsQuantityInSelectedFolderAndCacheIt()
                 binding.progressCircular.isIndeterminate = false
 
-
+                viewModel.numberOfProcessedFilesLD.postValue(0)
                 viewModel.collectFindingProgressFlow()
                 viewModel.getDuplicates()
                 viewModel.getURIsPrioritySet()
 
-                if (viewModel.mainActivitySharedData.foundDuplicatesList!!.isEmpty())
-                    withContext(Dispatchers.Main) { //TODO("Change that behavior")
-                        Toast.makeText(
-                            context,
-                            getString(R.string.no_duplicates_found), Toast.LENGTH_LONG
-                        ).show()
+                println(viewModel.mainActivitySharedData.foundDuplicatesList!!.joinToString(TAB))
+                println(viewModel.mainActivitySharedData.foundDuplicatesList!!.size)
+
+                withContext(Dispatchers.Main) {
+                    if (viewModel.mainActivitySharedData.foundDuplicatesList!!.isEmpty()) { //TODO("Change that behavior")
+                        val snackBar = Snackbar.make(
+                            binding.constraintLayout,
+                            R.string.no_duplicates_found,
+                            Snackbar.LENGTH_LONG
+                        )
+                        snackBar.setAction(R.string.snack_bar_action_button_show_settings) {
+                            showSettingsDialog()
+                        }
+                        snackBar.show()
                     } else {
-                    withContext(Dispatchers.Main) {
                         findNavController().navigate(R.id.action_duplicateFinderFragment_to_duplicatePrioritySelectorFragment)
                     }
                 }
-
             }
         }
     }
@@ -140,14 +157,9 @@ class DuplicateFinderFragment : Fragment() {
         binding.tvCurrentFolderName.text = it.lastPathSegment?.replaceFirst("primary:", "")
     }
 
-    private val numberOfProcessedFilesObserver = Observer<Int> {
-        binding.progressCircular.progress = it
-        val finalQuantity = binding.progressCircular.max
-        binding.tvCurrentProgress.text = getString(R.string.current_progress, it, finalQuantity)
-    }
-
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        progressStateFlowJob?.cancel()
     }
 }

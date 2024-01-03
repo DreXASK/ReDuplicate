@@ -12,6 +12,11 @@
     <string name="select_methods_to_find_duplicates">Select methods to find duplicates</string>
     <string name="current_progress">%1$d from %2$d</string>
     <string name="no_duplicates_found">No duplicates found</string>
+    <string name="snack_bar_action_button_show_settings">Show settings</string>
+
+    <!-- fragment_duplicate_priority_selector -->
+    <string name="fragment_duplicate_priority_selector_dialog_fragment_back_button_message">
+        By going back you will lose your scanned duplicates information</string>
 
     <!-- fragment_duplicate_remover -->
     <string name="btn_folders_priority_settings">Folders priority settings</string>
@@ -19,7 +24,8 @@
     <string name="btn_remove_duplicates">Remove duplicates</string>
     <string name="results_files">"Deleted %1$d files"</string>
     <string name="results_bytes">"(%1$s)"</string>
-    <string name="dialog_fragment_back_button_message">You are going to back to the start screen</string>
+    <string name="fragment_duplicate_remover_dialog_fragment_back_button_message">
+        You are going to back to the start screen</string>
 
     <!-- dialog_fragment_back_button -->
     <string name="btn_positive">Agree</string>

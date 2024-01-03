@@ -12,4 +12,8 @@
         <item name="android:maxHeight">290dp</item>
     </style>
 
+    <style name="DialogFragmentButtonStyle" parent="@style/OutlinedButton.WithText">
+        <item name="android:textColor">?attr/colorPrimary</item>
+    </style>
+
 </resources>

@@ -5,7 +5,6 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.drexask.reduplicate.domain.models.DuplicateWithHighlightedLine
 import com.drexask.reduplicate.domain.models.DuplicatesFindSettings
 import com.drexask.reduplicate.domain.usecases.GetDuplicatesListUseCase
 import com.drexask.reduplicate.domain.usecases.GetFoldersURIsContainDuplicatesListUseCase
@@ -14,7 +13,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
-import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,10 +21,8 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
 
     @Inject
     lateinit var getFoldersURIsContainDuplicatesListUseCase: GetFoldersURIsContainDuplicatesListUseCase
-
     @Inject
     lateinit var mainActivitySharedData: MainActivitySharedData
-
     @Inject
     lateinit var getDuplicatesListUseCase: GetDuplicatesListUseCase
 
@@ -36,7 +32,7 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
     val numberOfProcessedFilesLD = MutableLiveData<Int>()
 
     private var scannedFolder: StorageFolder? = null
-    private var itemsQuantityInSelectedFolder: Int? = null
+    var itemsQuantityInSelectedFolder: Int? = null
 
     fun getURIsPrioritySet() {
         mainActivitySharedData.uRIsContainDuplicatesPriorityList =
@@ -73,11 +69,8 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
 
     fun collectFindingProgressFlow() {
         viewModelScope.launch(Dispatchers.Default + SupervisorJob()) {
-            val progressFlow = getDuplicatesListUseCase.getFindingProgressFlow()
-            progressFlow.collect {
+            getDuplicatesListUseCase.stateFlow.collect {
                 numberOfProcessedFilesLD.postValue(it)
-                if (it == itemsQuantityInSelectedFolder)
-                    cancel()
             }
         }
     }

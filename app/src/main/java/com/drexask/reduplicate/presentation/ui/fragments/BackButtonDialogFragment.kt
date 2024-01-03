@@ -14,7 +14,6 @@ class BackButtonDialogFragment
     private var _binding: DialogFragmentBackButtonBinding? = null
     private val binding get() = _binding!!
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -48,5 +47,4 @@ class BackButtonDialogFragment
         super.onDestroyView()
         _binding = null
     }
-
 }
