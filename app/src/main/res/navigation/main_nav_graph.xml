@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/folderPickerFragment"
-        android:name="com.drexask.reduplicate.presentation.ui.fragments.FolderPickerFragment"
+        android:name="com.drexask.reduplicate.folderPicker.presentation.FolderPickerFragment"
         android:label="fragment_folder_picker"
         tools:layout="@layout/fragment_folder_picker" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/duplicateFinderFragment"
-        android:name="com.drexask.reduplicate.presentation.ui.fragments.DuplicateFinderFragment"
+        android:name="com.drexask.reduplicate.duplicateFinder.presentation.DuplicateFinderFragment"
         android:label="fragment_duplicate_finder"
         tools:layout="@layout/fragment_duplicate_finder" >
         <action
@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/duplicatePrioritySelectorFragment"
-        android:name="com.drexask.reduplicate.presentation.ui.fragments.DuplicatePrioritySelectorFragment"
+        android:name="com.drexask.reduplicate.duplicatePrioritySelector.presentation.DuplicatePrioritySelectorFragment"
         android:label="fragment_duplicate_priority_selector"
         tools:layout="@layout/fragment_duplicate_priority_selector" >
         <action
@@ -37,12 +37,12 @@
     </fragment>
     <fragment
         android:id="@+id/folderPrioritySettingsFragment"
-        android:name="com.drexask.reduplicate.presentation.ui.fragments.FolderPrioritySettingsFragment"
+        android:name="com.drexask.reduplicate.folderPrioritySettings.presentation.FolderPrioritySettingsFragment"
         android:label="fragment_folder_priority_settings"
         tools:layout="@layout/fragment_folder_priority_settings" />
     <fragment
         android:id="@+id/duplicateRemoverFragment"
-        android:name="com.drexask.reduplicate.presentation.ui.fragments.DuplicateRemoverFragment"
+        android:name="com.drexask.reduplicate.duplicateRemover.presentation.DuplicateRemoverFragment"
         android:label="fragment_duplicate_remover"
         tools:layout="@layout/fragment_duplicate_remover" />
 </navigation>

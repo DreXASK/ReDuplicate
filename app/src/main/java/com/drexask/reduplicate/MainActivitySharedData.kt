@@ -2,8 +2,7 @@ package com.drexask.reduplicate
 
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.drexask.reduplicate.domain.models.DuplicateWithHighlightedLine
+import com.drexask.reduplicate.core.domain.models.DuplicateWithHighlightedLine
 import dagger.hilt.android.scopes.ActivityRetainedScoped
 import javax.inject.Inject
 
