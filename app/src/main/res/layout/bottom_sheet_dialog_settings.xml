@@ -21,6 +21,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:gravity="center_horizontal"
         android:orientation="horizontal"
         android:weightSum="3"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -36,17 +37,9 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_weight="1"
+            android:checkable="true"
             android:text="@string/use_file_names_to_find_duplicates"
-            android:checkable="true"/>
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/chip_file_hashes"
-            style="@style/ChipChoice"
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            android:layout_weight="1"
-            android:text="@string/use_file_hash_to_find_duplicates"
-            android:checkable="true"/>
+            tools:checked="true" />
 
         <com.google.android.material.chip.Chip
             android:id="@+id/chip_file_weights"
@@ -54,10 +47,8 @@
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:layout_weight="1"
-            android:text="@string/use_file_weights_to_find_duplicates"
             android:checkable="true"
-            tools:checked="true"/>
-
+            android:text="@string/use_file_weights_to_find_duplicates" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

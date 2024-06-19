@@ -19,8 +19,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FolderPickerFragment : Fragment() {
 
-    //private val viewModel by hiltNavGraphViewModels<MainNavGraphViewModel>(R.id.main_graph)
-
     private lateinit var activityFolderPickerResultLauncher: ActivityResultLauncher<Intent>
 
     private lateinit var chooseFolderUseCase: ChooseFolderUseCase

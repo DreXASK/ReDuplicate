@@ -1,7 +1,9 @@
 package com.drexask.reduplicate.duplicateFinder.presentation
 
 import android.net.Uri
+import android.util.Log
 import androidx.documentfile.provider.DocumentFile
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,7 +12,9 @@ import com.drexask.reduplicate.duplicateFinder.domain.models.DuplicatesFindSetti
 import com.drexask.reduplicate.duplicateFinder.domain.usecase.GetDuplicatesListUseCase
 import com.drexask.reduplicate.duplicateFinder.domain.usecase.GetFoldersURIsContainDuplicatesListUseCase
 import com.drexask.reduplicate.duplicateFinder.domain.models.StorageFolder
+import com.drexask.reduplicate.duplicateFinder.utils.TAB
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
@@ -24,25 +28,47 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
     @Inject lateinit var mainActivitySharedData: MainActivitySharedData
     @Inject lateinit var getDuplicatesListUseCase: GetDuplicatesListUseCase
 
-    val treeUriLD = MutableLiveData<Uri>()
+    internal val finderState =
+        MutableLiveData<CurrentFinderState>().apply { this.value = CurrentFinderState.IDLE }
+
     lateinit var folderFileDoc: DocumentFile
 
-    val numberOfProcessedFilesLD = MutableLiveData<Int>()
+    val treeUriLD = MutableLiveData<Uri>()
+
+    private val _numberOfProcessedFilesLD = MutableLiveData<Int>()
+    val numberOfProcessedFilesLD
+        get() = _numberOfProcessedFilesLD as LiveData<Int>
 
     private var scannedFolder: StorageFolder? = null
     var itemsQuantityInSelectedFolder: Int? = null
 
-    fun getURIsPrioritySet() {
+    suspend fun startDuplicatesFindProcess() {
+        finderState.postValue(CurrentFinderState.SCAN_FOR_ITEM_COUNT)
+        scanFolder()
+        scanForItemsQuantityInSelectedFolderAndCacheIt()
+
+        finderState.postValue(CurrentFinderState.SCAN_FOR_DUPLICATES)
+        _numberOfProcessedFilesLD.postValue(0)
+        collectFindingProgressFlow()
+        getDuplicates()
+        getURIsPrioritySet()
+
+        println(mainActivitySharedData.foundDuplicatesList!!.joinToString(TAB))
+        println(mainActivitySharedData.foundDuplicatesList!!.size)
+
+    }
+
+    private fun getURIsPrioritySet() {
         mainActivitySharedData.uRIsContainDuplicatesPriorityList =
             getFoldersURIsContainDuplicatesListUseCase.execute(mainActivitySharedData.foundDuplicatesList!!)
     }
 
-    fun scanFolder() {
+    private fun scanFolder() {
         scannedFolder =
             StorageFolder(folderFileDoc).also { it.scanFolderForStoredItems() }
     }
 
-    fun scanForItemsQuantityInSelectedFolderAndCacheIt(): Int {
+    private fun scanForItemsQuantityInSelectedFolderAndCacheIt(): Int {
         if (scannedFolder == null)
             throw Exception("scannedFolder cannot be null here")
 
@@ -51,13 +77,15 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    suspend fun getDuplicates() {
+    private suspend fun getDuplicates() {
         if (scannedFolder == null)
             throw Exception("scannedFolder cannot be null here")
 
         val settings = DuplicatesFindSettings(
-             mainActivitySharedData.useFileNamesLD.value ?: throw Exception("useFileNames.value cannot be null here"),
-            mainActivitySharedData.useFileWeightsLD.value ?: throw Exception("useFileWeights.value cannot be null here")
+            mainActivitySharedData.useFileNamesLD.value
+                ?: throw Exception("useFileNames.value cannot be null here"),
+            mainActivitySharedData.useFileWeightsLD.value
+                ?: throw Exception("useFileWeights.value cannot be null here")
         )
 
         mainActivitySharedData.foundDuplicatesList = viewModelScope.async(Dispatchers.Default) {
@@ -65,12 +93,18 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
         }.await()
     }
 
-    fun collectFindingProgressFlow() {
+    private fun collectFindingProgressFlow() {
         viewModelScope.launch(Dispatchers.Default + SupervisorJob()) {
             getDuplicatesListUseCase.stateFlow.collect {
-                numberOfProcessedFilesLD.postValue(it)
+                _numberOfProcessedFilesLD.postValue(it)
             }
         }
     }
 
+}
+
+internal enum class CurrentFinderState {
+    IDLE,
+    SCAN_FOR_ITEM_COUNT,
+    SCAN_FOR_DUPLICATES
 }

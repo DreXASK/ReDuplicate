@@ -1,6 +1,7 @@
 package com.drexask.reduplicate.duplicateFinder.presentation
 
 import android.net.Uri
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -32,7 +33,7 @@ class DuplicateFinderFragment : Fragment() {
     private var _binding: FragmentDuplicateFinderBinding? = null
     private val binding get() = _binding!!
 
-    var progressStateFlowJob: Job? = null
+    private var progressStateFlowJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,7 +51,10 @@ class DuplicateFinderFragment : Fragment() {
 
     private fun setBundleDataToViewModel() {
         val bundle = arguments
-        val treeUri = bundle?.getParcelable<Uri>(TREE_URI)
+        val treeUri = when {
+            SDK_INT > 33 -> bundle?.getParcelable(TREE_URI, Uri::class.java)
+            else -> @Suppress("DEPRECATION") bundle?.getParcelable(TREE_URI)
+        }
         viewModel.treeUriLD.value = treeUri
     }
 
@@ -65,14 +69,8 @@ class DuplicateFinderFragment : Fragment() {
 
     private fun setupObservers() {
         viewModel.treeUriLD.observe(viewLifecycleOwner, treeUriObserver)
-
-        progressStateFlowJob = CoroutineScope(Dispatchers.Main).launch {
-            viewModel.getDuplicatesListUseCase.stateFlow.collect {
-                binding.progressCircular.progress = it
-                binding.tvCurrentProgress.text = getString(R.string.current_progress, it, viewModel.itemsQuantityInSelectedFolder)
-            }
-        }
-
+        viewModel.numberOfProcessedFilesLD.observe(viewLifecycleOwner, scanProgressObserver)
+        viewModel.finderState.observe(viewLifecycleOwner, finderStateObserver)
     }
 
     private fun showSettingsDialog() {
@@ -106,22 +104,9 @@ class DuplicateFinderFragment : Fragment() {
                 return@setOnClickListener
             }
 
-            binding.progressCircular.visibility = View.VISIBLE
-
             CoroutineScope(Dispatchers.IO).launch {
-                binding.progressCircular.isIndeterminate = true
-                viewModel.scanFolder()
-                binding.progressCircular.max =
-                    viewModel.scanForItemsQuantityInSelectedFolderAndCacheIt()
-                binding.progressCircular.isIndeterminate = false
 
-                viewModel.numberOfProcessedFilesLD.postValue(0)
-                viewModel.collectFindingProgressFlow()
-                viewModel.getDuplicates()
-                viewModel.getURIsPrioritySet()
-
-                println(viewModel.mainActivitySharedData.foundDuplicatesList!!.joinToString(TAB))
-                println(viewModel.mainActivitySharedData.foundDuplicatesList!!.size)
+                viewModel.startDuplicatesFindProcess()
 
                 withContext(Dispatchers.Main) {
                     if (viewModel.mainActivitySharedData.foundDuplicatesList!!.isEmpty()) { //TODO("Change that behavior")
@@ -148,9 +133,31 @@ class DuplicateFinderFragment : Fragment() {
         }
     }
 
-
     private val treeUriObserver = Observer<Uri> {
         binding.tvCurrentFolderName.text = it.lastPathSegment?.replaceFirst("primary:", "")
+    }
+
+    private val scanProgressObserver = Observer<Int> {
+        binding.progressCircular.progress = it
+        binding.tvCurrentProgress.text = getString(R.string.current_progress, it, viewModel.itemsQuantityInSelectedFolder)
+    }
+
+    private val finderStateObserver = Observer<CurrentFinderState> {
+        when(it) {
+            CurrentFinderState.IDLE -> {
+                binding.progressCircular.isIndeterminate = false
+                binding.progressCircular.visibility = View.INVISIBLE
+            }
+            CurrentFinderState.SCAN_FOR_ITEM_COUNT -> {
+                binding.progressCircular.visibility = View.VISIBLE
+                binding.progressCircular.isIndeterminate = true
+            }
+            CurrentFinderState.SCAN_FOR_DUPLICATES -> {
+                binding.progressCircular.visibility = View.VISIBLE
+                binding.progressCircular.isIndeterminate = false
+                binding.progressCircular.max = viewModel.itemsQuantityInSelectedFolder ?: throw Exception()
+            }
+        }
     }
 
     override fun onDestroyView() {
