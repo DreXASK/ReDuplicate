@@ -7,7 +7,8 @@ import com.drexask.reduplicate.duplicateFinder.domain.models.StorageFile
 
 class DuplicateLinesViewHolder(view: View): RecyclerView.ViewHolder(view) {
 
-    var binding: ListItemDuplicateLineBinding = ListItemDuplicateLineBinding.bind(view)
+    internal var binding: ListItemDuplicateLineBinding = ListItemDuplicateLineBinding.bind(view)
+
     fun bind(storageFile: StorageFile, isHighlighted: Boolean) {
         binding.apply {
             tvDuplicateUri.text = storageFile.file.uri.lastPathSegment?.replaceFirst("primary:", "")

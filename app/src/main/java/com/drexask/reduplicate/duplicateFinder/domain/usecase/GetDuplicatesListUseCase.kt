@@ -14,20 +14,18 @@ class GetDuplicatesListUseCase @Inject constructor() {
     private lateinit var settings: DuplicatesFindSettings
 
     private var _stateFlow: MutableStateFlow<Int> = MutableStateFlow(0)
-    val stateFlow: StateFlow<Int>
+    internal val stateFlow: StateFlow<Int>
         get() = _stateFlow
 
     fun execute(
         settings: DuplicatesFindSettings,
         scannedFolder: StorageFolder
     ): List<DuplicateWithHighlightedLine> {
-
-        _stateFlow.value = 0
-
-        this.settings = settings
-
         val duplicatesMap = emptyMap<String, MutableList<StorageFile>>().toMutableMap()
         val duplicatesList = emptyList<DuplicateWithHighlightedLine>().toMutableList()
+
+        _stateFlow.value = 0
+        this.settings = settings
 
         fillDuplicatesMap(duplicatesMap, scannedFolder)
         duplicatesMap.map {
@@ -58,10 +56,11 @@ class GetDuplicatesListUseCase @Inject constructor() {
         file: StorageFile
     ) {
         val duplicatesMapKey = StringBuilder()
+
         if (settings.useFileNames)
             duplicatesMapKey.append(file.file.name)
         if (settings.useFileWeights)
-            duplicatesMapKey.append(file.file.length())
+            duplicatesMapKey.append(file.file.length().toString() + "bytes")
 
         addOrUpdateValueToDuplicatesMap(duplicateMap, duplicatesMapKey.toString(), file)
     }

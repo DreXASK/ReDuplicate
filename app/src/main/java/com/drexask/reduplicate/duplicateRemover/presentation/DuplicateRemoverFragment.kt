@@ -13,7 +13,6 @@ import androidx.lifecycle.withResumed
 import androidx.navigation.fragment.findNavController
 import com.drexask.reduplicate.R
 import com.drexask.reduplicate.databinding.FragmentDuplicateRemoverBinding
-import com.drexask.reduplicate.duplicateRemover.domain.usecase.ConvertBytesUseCase
 import com.drexask.reduplicate.toBackDialog.presentation.BackButtonDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -26,12 +25,13 @@ import javax.inject.Inject
 class DuplicateRemoverFragment : Fragment() {
 
     @Inject
-    lateinit var convertBytesUseCase: ConvertBytesUseCase
+    lateinit var convertBytes: ConvertBytes
 
     private val viewModel: DuplicateRemoverFragmentViewModel by viewModels()
 
     private var _binding: FragmentDuplicateRemoverBinding? = null
     private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -105,7 +105,7 @@ class DuplicateRemoverFragment : Fragment() {
 
                     withContext(Dispatchers.Default) {
                         viewModel.collectRemovingProgressFlow()
-                        viewModel.removeDuplicates( viewModel.mainActivitySharedData.foundDuplicatesList!!)
+                        viewModel.removeDuplicates(viewModel.mainActivitySharedData.foundDuplicatesList!!)
                     }
 
                     progressBarUp.visibility = View.GONE
@@ -120,7 +120,7 @@ class DuplicateRemoverFragment : Fragment() {
     }
 
     private val removedBytesObserver = Observer<Long> {
-        val result = convertBytesUseCase.execute(it)
+        val result = convertBytes.execute(it)
         val resultString = "${"%.2f".format(result.first)} ${result.second}"
         binding.tvNumberOfBytes.text = getString(R.string.results_bytes, resultString)
     }

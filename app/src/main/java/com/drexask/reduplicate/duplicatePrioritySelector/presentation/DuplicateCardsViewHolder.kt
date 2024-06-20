@@ -8,7 +8,7 @@ import com.drexask.reduplicate.core.domain.models.DuplicateWithHighlightedLine
 
 class DuplicateCardsViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
-    var binding: ListItemDuplicateCardBinding = ListItemDuplicateCardBinding.bind(view)
+    internal var binding: ListItemDuplicateCardBinding = ListItemDuplicateCardBinding.bind(view)
 
     fun bind(
         context: Context,

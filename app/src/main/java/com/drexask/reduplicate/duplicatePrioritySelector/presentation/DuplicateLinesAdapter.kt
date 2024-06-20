@@ -15,6 +15,7 @@ class DuplicateLinesAdapter(
 ): RecyclerView.Adapter<DuplicateLinesViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
+
     override fun getItemCount(): Int = duplicateWithHighlightedLine.duplicateFilesInnerList.size
 
     private fun getItem(position: Int): StorageFile = duplicateWithHighlightedLine.duplicateFilesInnerList[position]
@@ -25,7 +26,7 @@ class DuplicateLinesAdapter(
         return DuplicateLinesViewHolder(inflater.inflate(R.layout.list_item_duplicate_line, parent, false))
     }
 
-    @SuppressLint("NotifyDataSetChanged") // Must to refresh all data set
+    @SuppressLint("NotifyDataSetChanged") // Must to refresh whole the data set
     override fun onBindViewHolder(holder: DuplicateLinesViewHolder, position: Int) {
         holder.bind(getItem(position), getHighlightedPropertyValue(position))
 

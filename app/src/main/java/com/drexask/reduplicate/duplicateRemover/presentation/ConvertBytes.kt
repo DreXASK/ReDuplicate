@@ -1,8 +1,8 @@
-package com.drexask.reduplicate.duplicateRemover.domain.usecase
+package com.drexask.reduplicate.duplicateRemover.presentation
 
 import javax.inject.Inject
 
-class ConvertBytesUseCase @Inject constructor() {
+class ConvertBytes @Inject constructor() {
 
     enum class InformationUnit(val ratioToBytes: Double) {
         Bytes(1.0),

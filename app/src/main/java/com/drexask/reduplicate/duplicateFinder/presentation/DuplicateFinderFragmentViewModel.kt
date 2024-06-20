@@ -26,9 +26,12 @@ import javax.inject.Inject
 @HiltViewModel
 class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
 
-    @Inject lateinit var getFoldersURIsContainDuplicatesListUseCase: GetFoldersURIsContainDuplicatesListUseCase
-    @Inject lateinit var mainActivitySharedData: MainActivitySharedData
-    @Inject lateinit var getDuplicatesListUseCase: GetDuplicatesListUseCase
+    @Inject
+    lateinit var getFoldersURIsContainDuplicatesListUseCase: GetFoldersURIsContainDuplicatesListUseCase
+    @Inject
+    lateinit var mainActivitySharedData: MainActivitySharedData
+    @Inject
+    lateinit var getDuplicatesListUseCase: GetDuplicatesListUseCase
 
     internal val finderState =
         MutableLiveData<CurrentFinderState>().apply { this.value = CurrentFinderState.IDLE }

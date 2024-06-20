@@ -12,22 +12,14 @@ class DuplicatePrioritySelectorViewModel @Inject constructor() : ViewModel() {
 
     @Inject
     lateinit var mainActivitySharedData: MainActivitySharedData
-
     @Inject
     lateinit var setDuplicatesHighlightedLinesByPriorityListUseCase: SetDuplicatesHighlightedLinesByPriorityListUseCase
 
-    fun swapUriPriorities(fromPosition: Int, toPosition: Int) {
-        Collections.swap(
-            mainActivitySharedData.uRIsContainDuplicatesPriorityList!!,
-            fromPosition,
-            toPosition
+    fun setDuplicatesHighlightedLinesByPriorityList() {
+        setDuplicatesHighlightedLinesByPriorityListUseCase.execute(
+            duplicatesList = mainActivitySharedData.foundDuplicatesList!!,
+            priorityList = mainActivitySharedData.uRIsContainDuplicatesPriorityList!!
         )
     }
 
-    fun setDuplicatesHighlightedLinesByPriorityList() {
-        setDuplicatesHighlightedLinesByPriorityListUseCase.execute(
-            mainActivitySharedData.foundDuplicatesList!!,
-            mainActivitySharedData.uRIsContainDuplicatesPriorityList!!
-        )
-    }
 }

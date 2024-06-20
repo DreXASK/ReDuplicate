@@ -6,21 +6,25 @@ import com.drexask.reduplicate.core.utils.removeFileFromUri
 import javax.inject.Inject
 
 class SetDuplicatesHighlightedLinesByPriorityListUseCase @Inject constructor() {
-    fun execute(duplicatesList: List<DuplicateWithHighlightedLine>,
-                priorityList: List<Uri>) {
+
+    fun execute(
+        duplicatesList: List<DuplicateWithHighlightedLine>,
+        priorityList: List<Uri>
+    ) {
         duplicatesList.map { duplicate ->
             var highestPriority = Int.MAX_VALUE
-            var indexOfHighestPriorityUriIndexFound = 0
+            var indexOfHighestPriorityUri = 0
 
             duplicate.duplicateFilesInnerList.mapIndexed { index, storageFile ->
                 val currentPriority =
                     priorityList.indexOf(storageFile.file.uri.removeFileFromUri())
-                if (currentPriority < highestPriority) {
+                if (currentPriority < highestPriority) { // Lesser index - higher priority
                     highestPriority = currentPriority
-                    indexOfHighestPriorityUriIndexFound = index
+                    indexOfHighestPriorityUri = index
                 }
             }
-            duplicate.highlightedLineIndex = indexOfHighestPriorityUriIndexFound
+            duplicate.highlightedLineIndex = indexOfHighestPriorityUri
         }
     }
+
 }

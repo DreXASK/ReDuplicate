@@ -14,6 +14,7 @@ class DuplicateCardsAdapter(
 ) : RecyclerView.Adapter<DuplicateCardsViewHolder>() {
 
     private val inflater: LayoutInflater = LayoutInflater.from(context)
+
     override fun getItemCount(): Int = duplicatesList.size
 
     private fun getItem(position: Int): DuplicateWithHighlightedLine = duplicatesList[position]

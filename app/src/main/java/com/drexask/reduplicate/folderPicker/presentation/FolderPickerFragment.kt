@@ -19,9 +19,8 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FolderPickerFragment : Fragment() {
 
-    private lateinit var activityFolderPickerResultLauncher: ActivityResultLauncher<Intent>
-
     private lateinit var chooseFolderUseCase: ChooseFolderUseCase
+    private lateinit var activityFolderPickerResultLauncher: ActivityResultLauncher<Intent>
 
     private var _binding: FragmentFolderPickerBinding? = null
     private val binding get() = _binding!!
@@ -62,8 +61,11 @@ class FolderPickerFragment : Fragment() {
         ) { result ->
             if (result.resultCode == AppCompatActivity.RESULT_OK) {
                 val treeUri = result.data?.data
-                val bundle = Bundle().also { it. putParcelable(TREE_URI, treeUri) }
-                findNavController().navigate(R.id.action_folderPickerFragment_to_duplicateFinderFragment, bundle)
+                val bundle = Bundle().also { it.putParcelable(TREE_URI, treeUri) }
+                findNavController().navigate(
+                    R.id.action_folderPickerFragment_to_duplicateFinderFragment,
+                    bundle
+                )
             }
         }
     }

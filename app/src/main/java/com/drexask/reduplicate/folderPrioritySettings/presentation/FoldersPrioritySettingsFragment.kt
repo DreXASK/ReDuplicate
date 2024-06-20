@@ -14,13 +14,12 @@ import com.drexask.reduplicate.databinding.FragmentFolderPrioritySettingsBinding
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class FolderPrioritySettingsFragment : Fragment() {
+class FoldersPrioritySettingsFragment : Fragment() {
 
-    private val viewModel: DuplicatePrioritySelectorViewModel by viewModels()
+    private val viewModel: FoldersPrioritySettingsViewModel by viewModels()
 
     private var _binding: FragmentFolderPrioritySettingsBinding? = null
     private val binding get() = _binding!!
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

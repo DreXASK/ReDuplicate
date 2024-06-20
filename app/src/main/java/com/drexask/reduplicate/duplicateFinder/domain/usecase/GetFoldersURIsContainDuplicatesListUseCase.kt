@@ -8,15 +8,15 @@ import javax.inject.Inject
 class GetFoldersURIsContainDuplicatesListUseCase @Inject constructor() {
 
     fun execute(duplicatesList: List<DuplicateWithHighlightedLine>) : MutableList<Uri> {
-        val mutableFoldersWithPrioritySet = mutableSetOf<Uri>()
+        val mFoldersWithPrioritySet = mutableSetOf<Uri>()
 
         duplicatesList.map { duplicate ->
             duplicate.duplicateFilesInnerList.map {
                 val folderUri = it.file.uri.removeFileFromUri()
-                mutableFoldersWithPrioritySet.add(folderUri)
+                mFoldersWithPrioritySet.add(folderUri)
             }
         }
 
-        return mutableFoldersWithPrioritySet.toMutableList()
+        return mFoldersWithPrioritySet.toMutableList()
     }
 }

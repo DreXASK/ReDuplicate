@@ -139,25 +139,29 @@ class DuplicateFinderFragment : Fragment() {
 
     private val scanProgressObserver = Observer<Int> {
         binding.progressCircular.progress = it
-        binding.tvCurrentProgress.text = getString(R.string.current_progress, it, viewModel.itemsQuantityInSelectedFolder)
+        binding.tvCurrentProgress.text =
+            getString(R.string.current_progress, it, viewModel.itemsQuantityInSelectedFolder)
     }
 
     @SuppressLint("SetTextI18n")
     private val finderStateObserver = Observer<CurrentFinderState> {
-        when(it) {
+        when (it) {
             CurrentFinderState.IDLE -> {
                 binding.progressCircular.isIndeterminate = false
                 binding.progressCircular.visibility = View.INVISIBLE
                 binding.tvCurrentProgress.text = ""
             }
+
             CurrentFinderState.SCAN_FOR_ITEM_COUNT -> {
                 binding.progressCircular.visibility = View.VISIBLE
                 binding.progressCircular.isIndeterminate = true
             }
+
             CurrentFinderState.SCAN_FOR_DUPLICATES -> {
                 binding.progressCircular.visibility = View.VISIBLE
                 binding.progressCircular.isIndeterminate = false
-                binding.progressCircular.max = viewModel.itemsQuantityInSelectedFolder ?: throw Exception()
+                binding.progressCircular.max =
+                    viewModel.itemsQuantityInSelectedFolder ?: throw Exception()
             }
         }
     }

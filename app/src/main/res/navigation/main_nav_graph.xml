@@ -37,7 +37,7 @@
     </fragment>
     <fragment
         android:id="@+id/folderPrioritySettingsFragment"
-        android:name="com.drexask.reduplicate.folderPrioritySettings.presentation.FolderPrioritySettingsFragment"
+        android:name="com.drexask.reduplicate.folderPrioritySettings.presentation.FoldersPrioritySettingsFragment"
         android:label="fragment_folder_priority_settings"
         tools:layout="@layout/fragment_folder_priority_settings" />
     <fragment

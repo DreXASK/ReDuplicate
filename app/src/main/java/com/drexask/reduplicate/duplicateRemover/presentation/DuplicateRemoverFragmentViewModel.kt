@@ -32,13 +32,14 @@ class DuplicateRemoverFragmentViewModel @Inject constructor() : ViewModel() {
 
     fun collectRemovingProgressFlow() {
         viewModelScope.launch(Dispatchers.Default + SupervisorJob()) {
-            val progressFlow = removeDuplicatesUseCase.getRemovingProgressFlow()
+            val progressFlow = removeDuplicatesUseCase.stateFlow
             progressFlow.collect {
                 val numberOfRemovedFiles = it.first
                 val numberOfRemovedBytes = it.second
                 numberOfRemovedFilesLD.postValue(numberOfRemovedFiles)
                 numberOfRemovedBytesLD.postValue(numberOfRemovedBytes)
             }
+
         }
     }
 

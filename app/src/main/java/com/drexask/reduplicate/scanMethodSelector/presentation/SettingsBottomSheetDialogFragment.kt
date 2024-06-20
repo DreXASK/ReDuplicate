@@ -20,6 +20,7 @@ class SettingsBottomSheetDialogFragment(@LayoutRes layoutRes: Int): BottomSheetD
 
     private var _binding: BottomSheetDialogSettingsBinding? = null
     private val binding get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
