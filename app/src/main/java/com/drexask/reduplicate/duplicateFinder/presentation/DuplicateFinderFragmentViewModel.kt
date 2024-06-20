@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drexask.reduplicate.MainActivitySharedData
@@ -16,6 +17,7 @@ import com.drexask.reduplicate.duplicateFinder.utils.TAB
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -32,15 +34,14 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
         MutableLiveData<CurrentFinderState>().apply { this.value = CurrentFinderState.IDLE }
 
     lateinit var folderFileDoc: DocumentFile
-
-    val treeUriLD = MutableLiveData<Uri>()
+    internal val treeUriLD = MutableLiveData<Uri>()
 
     private val _numberOfProcessedFilesLD = MutableLiveData<Int>()
-    val numberOfProcessedFilesLD
+    internal val numberOfProcessedFilesLD
         get() = _numberOfProcessedFilesLD as LiveData<Int>
 
     private var scannedFolder: StorageFolder? = null
-    var itemsQuantityInSelectedFolder: Int? = null
+    internal var itemsQuantityInSelectedFolder: Int? = null
 
     suspend fun startDuplicatesFindProcess() {
         finderState.postValue(CurrentFinderState.SCAN_FOR_ITEM_COUNT)
@@ -53,9 +54,9 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
         getDuplicates()
         getURIsPrioritySet()
 
+        finderState.postValue(CurrentFinderState.IDLE)
         println(mainActivitySharedData.foundDuplicatesList!!.joinToString(TAB))
         println(mainActivitySharedData.foundDuplicatesList!!.size)
-
     }
 
     private fun getURIsPrioritySet() {
@@ -100,7 +101,6 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
             }
         }
     }
-
 }
 
 internal enum class CurrentFinderState {

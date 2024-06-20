@@ -1,5 +1,6 @@
 package com.drexask.reduplicate.duplicateFinder.presentation
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
@@ -11,6 +12,7 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.transition.Visibility
 import com.drexask.reduplicate.R
 import com.drexask.reduplicate.duplicateFinder.utils.TAB
 import com.drexask.reduplicate.duplicateFinder.utils.TREE_URI
@@ -32,8 +34,6 @@ class DuplicateFinderFragment : Fragment() {
 
     private var _binding: FragmentDuplicateFinderBinding? = null
     private val binding get() = _binding!!
-
-    private var progressStateFlowJob: Job? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -142,11 +142,13 @@ class DuplicateFinderFragment : Fragment() {
         binding.tvCurrentProgress.text = getString(R.string.current_progress, it, viewModel.itemsQuantityInSelectedFolder)
     }
 
+    @SuppressLint("SetTextI18n")
     private val finderStateObserver = Observer<CurrentFinderState> {
         when(it) {
             CurrentFinderState.IDLE -> {
                 binding.progressCircular.isIndeterminate = false
                 binding.progressCircular.visibility = View.INVISIBLE
+                binding.tvCurrentProgress.text = ""
             }
             CurrentFinderState.SCAN_FOR_ITEM_COUNT -> {
                 binding.progressCircular.visibility = View.VISIBLE
@@ -163,6 +165,5 @@ class DuplicateFinderFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
-        progressStateFlowJob?.cancel()
     }
 }
