@@ -1,11 +1,9 @@
 package com.drexask.reduplicate.duplicateFinder.presentation
 
 import android.net.Uri
-import android.util.Log
 import androidx.documentfile.provider.DocumentFile
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.OnLifecycleEvent
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.drexask.reduplicate.MainActivitySharedData
@@ -15,9 +13,7 @@ import com.drexask.reduplicate.duplicateFinder.domain.usecase.GetFoldersURIsCont
 import com.drexask.reduplicate.duplicateFinder.domain.models.StorageFolder
 import com.drexask.reduplicate.duplicateFinder.utils.TAB
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -34,7 +30,7 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
     lateinit var getDuplicatesListUseCase: GetDuplicatesListUseCase
 
     internal val finderState =
-        MutableLiveData<CurrentFinderState>().apply { this.value = CurrentFinderState.IDLE }
+        MutableLiveData<FinderState>().apply { this.value = FinderState.IDLE }
 
     lateinit var folderFileDoc: DocumentFile
     internal val treeUriLD = MutableLiveData<Uri>()
@@ -47,17 +43,17 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
     internal var itemsQuantityInSelectedFolder: Int? = null
 
     suspend fun startDuplicatesFindProcess() {
-        finderState.postValue(CurrentFinderState.SCAN_FOR_ITEM_COUNT)
+        finderState.postValue(FinderState.SCAN_FOR_ITEM_COUNT)
         scanFolder()
         scanForItemsQuantityInSelectedFolderAndCacheIt()
 
-        finderState.postValue(CurrentFinderState.SCAN_FOR_DUPLICATES)
+        finderState.postValue(FinderState.SCAN_FOR_DUPLICATES)
         _numberOfProcessedFilesLD.postValue(0)
         collectFindingProgressFlow()
         getDuplicates()
         getURIsPrioritySet()
 
-        finderState.postValue(CurrentFinderState.IDLE)
+        finderState.postValue(FinderState.IDLE)
         println(mainActivitySharedData.foundDuplicatesList!!.joinToString(TAB))
         println(mainActivitySharedData.foundDuplicatesList!!.size)
     }
@@ -106,7 +102,7 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
     }
 }
 
-internal enum class CurrentFinderState {
+internal enum class FinderState {
     IDLE,
     SCAN_FOR_ITEM_COUNT,
     SCAN_FOR_DUPLICATES

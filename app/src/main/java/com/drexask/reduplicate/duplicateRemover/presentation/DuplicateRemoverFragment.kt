@@ -60,11 +60,11 @@ class DuplicateRemoverFragment : Fragment() {
 
     private fun showGoBackDialogFragment() {
         val dialogFragment = BackButtonDialogFragment()
-            dialogFragment.setStyle(
-                DialogFragment.STYLE_NORMAL,
-                R.style.CustomBottomSheetDialogTheme
-            )
-            dialogFragment.show(childFragmentManager, null)
+        dialogFragment.setStyle(
+            DialogFragment.STYLE_NORMAL,
+            R.style.CustomBottomSheetDialogTheme
+        )
+        dialogFragment.show(childFragmentManager, null)
 
         CoroutineScope(Dispatchers.Main).launch {
             dialogFragment.withResumed {

@@ -12,9 +12,7 @@ import androidx.documentfile.provider.DocumentFile
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import androidx.transition.Visibility
 import com.drexask.reduplicate.R
-import com.drexask.reduplicate.duplicateFinder.utils.TAB
 import com.drexask.reduplicate.duplicateFinder.utils.TREE_URI
 import com.drexask.reduplicate.databinding.FragmentDuplicateFinderBinding
 import com.drexask.reduplicate.scanMethodSelector.presentation.SettingsBottomSheetDialogFragment
@@ -23,7 +21,6 @@ import com.google.android.material.snackbar.Snackbar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -144,24 +141,27 @@ class DuplicateFinderFragment : Fragment() {
     }
 
     @SuppressLint("SetTextI18n")
-    private val finderStateObserver = Observer<CurrentFinderState> {
+    private val finderStateObserver = Observer<FinderState> {
         when (it) {
-            CurrentFinderState.IDLE -> {
+            FinderState.IDLE -> {
                 binding.progressCircular.isIndeterminate = false
                 binding.progressCircular.visibility = View.INVISIBLE
                 binding.tvCurrentProgress.text = ""
+                binding.tvCurrentState.text = ""
             }
 
-            CurrentFinderState.SCAN_FOR_ITEM_COUNT -> {
+            FinderState.SCAN_FOR_ITEM_COUNT -> {
                 binding.progressCircular.visibility = View.VISIBLE
                 binding.progressCircular.isIndeterminate = true
+                binding.tvCurrentState.text = getString(R.string.scanning_for_number_of_files)
             }
 
-            CurrentFinderState.SCAN_FOR_DUPLICATES -> {
+            FinderState.SCAN_FOR_DUPLICATES -> {
                 binding.progressCircular.visibility = View.VISIBLE
                 binding.progressCircular.isIndeterminate = false
                 binding.progressCircular.max =
                     viewModel.itemsQuantityInSelectedFolder ?: throw Exception()
+                binding.tvCurrentState.text = getString(R.string.scanning_for_duplicates)
             }
         }
     }

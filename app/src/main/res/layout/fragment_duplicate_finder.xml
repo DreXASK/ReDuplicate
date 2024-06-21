@@ -7,7 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".duplicateFinder.presentation.DuplicateFinderFragment">
 
-
     <ProgressBar
         android:id="@+id/progress_circular"
         android:layout_width="0dp"
@@ -45,6 +44,7 @@
         android:maxLines="5"
         android:textAlignment="center"
         android:textSize="34sp"
+        android:textColor="?attr/colorPrimary"
         app:layout_constraintBottom_toTopOf="@+id/progress_circular"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -88,5 +88,16 @@
         app:layout_constraintStart_toEndOf="@+id/btn_back_to_folderPicker"
         app:layout_constraintTop_toBottomOf="@+id/progress_circular"
         app:layout_constraintVertical_bias="0.5" />
+
+    <TextView
+        android:id="@+id/tv_current_state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="?attr/colorPrimary"
+        app:layout_constraintBottom_toTopOf="@+id/btn_settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/progress_circular"
+        tools:text="Scanning for number of files" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,6 +13,8 @@
     <string name="current_progress">%1$d from %2$d</string>
     <string name="no_duplicates_found">No duplicates found</string>
     <string name="snack_bar_action_button_show_settings">Show settings</string>
+    <string name="scanning_for_number_of_files">Scanning for the number of files</string>
+    <string name="scanning_for_duplicates">Scanning for duplicates</string>
 
     <!-- fragment_duplicate_priority_selector -->
     <string name="fragment_duplicate_priority_selector_dialog_fragment_back_button_message">
