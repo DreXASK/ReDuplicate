@@ -19,19 +19,23 @@
     <!-- fragment_duplicate_priority_selector -->
     <string name="fragment_duplicate_priority_selector_dialog_fragment_back_button_message">
         By going back you will lose your scanned duplicates information</string>
+    <string name="select_files_to_remain_intact">Select files to remain intact</string>
+
+    <!-- fragment_folder_priority_settings -->
+    <string name="back_to_duplicates_selection">Back to duplicates selection</string>
+    <string name="the_lesser_number_the_highest_priority">The lesser number - the highest priority</string>
 
     <!-- fragment_duplicate_remover -->
     <string name="btn_folders_priority_settings">Folders priority settings</string>
     <string name="btn_apply_priority_settings">Apply settings</string>
     <string name="btn_remove_duplicates">Remove duplicates</string>
-    <string name="results_files">"Deleted %1$d files"</string>
-    <string name="results_bytes">"(%1$s)"</string>
+    <string name="btn_go_back">Go back</string>
+    <string name="results_files">"Deleted %1$d files (%2$s)"</string>
     <string name="fragment_duplicate_remover_dialog_fragment_back_button_message">
         You are going to back to the start screen</string>
 
     <!-- dialog_fragment_back_button -->
     <string name="btn_positive">Agree</string>
     <string name="btn_negative">Cancel</string>
-
 
 </resources>

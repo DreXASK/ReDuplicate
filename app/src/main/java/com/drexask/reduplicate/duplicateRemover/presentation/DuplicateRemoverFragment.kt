@@ -41,20 +41,27 @@ class DuplicateRemoverFragment : Fragment() {
         setupObservers()
         setupListeners()
 
-        changeBackButtonBehavior()
+        //changeBackButtonBehavior()
 
         return binding.root
     }
 
+//    private fun changeBackButtonBehavior() {
+//        val onBackPressedDispatcher = activity?.onBackPressedDispatcher
+//        onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
+//            if (viewModel.areDuplicatesRemoved) {
+//                showGoBackDialogFragment()
+//            } else {
+//                remove()
+//                onBackPressedDispatcher.onBackPressed()
+//            }
+//        }
+//    }
+
     private fun changeBackButtonBehavior() {
         val onBackPressedDispatcher = activity?.onBackPressedDispatcher
         onBackPressedDispatcher?.addCallback(viewLifecycleOwner) {
-            if (viewModel.areDuplicatesRemoved) {
-                showGoBackDialogFragment()
-            } else {
-                remove()
-                onBackPressedDispatcher.onBackPressed()
-            }
+            showGoBackDialogFragment()
         }
     }
 
@@ -81,8 +88,14 @@ class DuplicateRemoverFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.numberOfRemovedFilesLD.observe(viewLifecycleOwner, removedFilesObserver)
-        viewModel.numberOfRemovedBytesLD.observe(viewLifecycleOwner, removedBytesObserver)
+        viewModel.numberOfRemovedFilesAndBytesLD.observe(
+            viewLifecycleOwner,
+            removedFilesAndBytesObserver
+        )
+        viewModel.areDuplicatesBeingRemovedLD.observe(
+            viewLifecycleOwner,
+            removingStateObserver
+        )
     }
 
     private fun setupListeners() {
@@ -99,30 +112,33 @@ class DuplicateRemoverFragment : Fragment() {
     private fun clickRemoveDuplicates() {
         binding.apply {
             btnRemoveDuplicates.setOnClickListener {
-                CoroutineScope(Dispatchers.Main).launch {
-                    progressBarUp.visibility = View.VISIBLE
-                    progressBarDown.visibility = View.VISIBLE
+                viewModel.collectRemovingProgressFlow()
+                viewModel.removeDuplicates(viewModel.mainActivitySharedData.foundDuplicatesList!!)
 
-                    withContext(Dispatchers.Default) {
-                        viewModel.collectRemovingProgressFlow()
-                        viewModel.removeDuplicates(viewModel.mainActivitySharedData.foundDuplicatesList!!)
-                    }
-
-                    progressBarUp.visibility = View.GONE
-                    progressBarDown.visibility = View.GONE
-                }
+                btnRemoveDuplicates.isEnabled = false
+                changeBackButtonBehavior()
             }
         }
     }
 
-    private val removedFilesObserver = Observer<Int> {
-        binding.tvNumberOfFiles.text = getString(R.string.results_files, it)
+    private val removedFilesAndBytesObserver = Observer<Pair<Int, Long>> {
+        val bytesResult = convertBytes.execute(it.second)
+        val bytesResultString = "${"%.2f".format(bytesResult.first)} ${bytesResult.second}"
+        binding.tvResult.text = getString(R.string.results_files, it.first, bytesResultString)
     }
 
-    private val removedBytesObserver = Observer<Long> {
-        val result = convertBytes.execute(it)
-        val resultString = "${"%.2f".format(result.first)} ${result.second}"
-        binding.tvNumberOfBytes.text = getString(R.string.results_bytes, resultString)
+    private val removingStateObserver = Observer<Boolean> {
+        when (it) {
+            true -> {
+                binding.progressBarUp.visibility = View.VISIBLE
+                binding.progressBarDown.visibility = View.VISIBLE
+            }
+
+            false -> {
+                binding.progressBarUp.visibility = View.GONE
+                binding.progressBarDown.visibility = View.GONE
+            }
+        }
     }
 
     override fun onDestroyView() {

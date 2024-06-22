@@ -60,7 +60,7 @@ class GetDuplicatesListUseCase @Inject constructor() {
         if (settings.useFileNames)
             duplicatesMapKey.append(file.file.name)
         if (settings.useFileWeights)
-            duplicatesMapKey.append(file.file.length().toString() + "bytes")
+            duplicatesMapKey.append(" (" + file.file.length().toString() + " bytes)")
 
         addOrUpdateValueToDuplicatesMap(duplicateMap, duplicatesMapKey.toString(), file)
     }

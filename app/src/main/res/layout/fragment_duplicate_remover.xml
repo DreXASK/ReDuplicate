@@ -19,7 +19,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.9" />
+        app:layout_constraintVertical_bias="0.89" />
 
     <ProgressBar
         android:id="@+id/progressBarDown"
@@ -60,6 +60,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
+                android:contentDescription="@string/btn_go_back"
                 app:icon="@drawable/round_chevron_left_24" />
 
             <Button
@@ -71,28 +72,14 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <TextView
+            android:id="@+id/tv_result"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="10dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/tv_number_of_files"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginHorizontal="2dp"
-                android:textSize="20sp"
-                tools:text="Removed 10 files" />
-
-            <TextView
-                android:id="@+id/tv_number_of_bytes"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="2dp"
-                android:textSize="20sp"
-                tools:text="(34 MB)" />
-        </LinearLayout>
+            android:layout_marginHorizontal="2dp"
+            android:gravity="center"
+            android:textSize="20sp"
+            tools:text="Removed 10 files (34 MB)" />
 
     </LinearLayout>
 
