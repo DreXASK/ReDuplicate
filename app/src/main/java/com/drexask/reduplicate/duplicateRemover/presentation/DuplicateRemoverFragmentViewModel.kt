@@ -27,8 +27,7 @@ class DuplicateRemoverFragmentViewModel @Inject constructor() : ViewModel() {
     internal var areDuplicatesRemoved = false
 
     private var _areDuplicatesBeingRemovedLD: MutableLiveData<Boolean> = MutableLiveData<Boolean>().apply { value = false }
-    internal val areDuplicatesBeingRemovedLD: LiveData<Boolean>
-        get() = _areDuplicatesBeingRemovedLD
+    internal val areDuplicatesBeingRemovedLD: LiveData<Boolean> = _areDuplicatesBeingRemovedLD
 
     val numberOfRemovedFilesAndBytesLD = MutableLiveData<Pair<Int, Long>>()
 

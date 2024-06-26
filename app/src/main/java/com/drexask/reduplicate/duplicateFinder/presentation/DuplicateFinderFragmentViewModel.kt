@@ -36,8 +36,7 @@ class DuplicateFinderFragmentViewModel @Inject constructor() : ViewModel() {
     internal val treeUriLD = MutableLiveData<Uri>()
 
     private val _numberOfProcessedFilesLD = MutableLiveData<Int>()
-    internal val numberOfProcessedFilesLD
-        get() = _numberOfProcessedFilesLD as LiveData<Int>
+    internal val numberOfProcessedFilesLD: LiveData<Int> = _numberOfProcessedFilesLD
 
     private var scannedFolder: StorageFolder? = null
     internal var itemsQuantityInSelectedFolder: Int? = null
