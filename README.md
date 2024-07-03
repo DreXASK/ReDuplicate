@@ -2,8 +2,8 @@
 <h5 align="center">An app for searching and removing of file duplicates on your phone</h5>
 
 ## Stack
-- XML Layouts
 - Kotlin
+- XML Layouts
 - Coroutines
 - Coroutines Flow
 - Navigation Component
