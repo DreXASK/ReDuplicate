@@ -1,5 +1,5 @@
 [![Typing SVG](https://readme-typing-svg.herokuapp.com?font=Fira+Code&size=74&pause=1000&center=true&vCenter=true&random=false&width=1200&height=75&lines=ReDuplicate)](https://git.io/typing-svg) 
-<h5 align="center">An app for searching and removing of file duplicates on your phone</h3>
+<h5 align="center">An app for searching and removing of file duplicates on your phone</h5>
 
 ## Stack
 - XML Layouts
